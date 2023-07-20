@@ -477,17 +477,17 @@ Info Box
 #about {
 	padding: 100px 0 50px 0;
 }
-/* Team Section
+/* Achievements Section
 ********************************************************************* */
-#team {
+#achievement {
 	padding: 50px 0 100px 0;
 }
-#team .icon {
+#achievement .icon {
 	font-size: 26px;
 }
-/* development Section
+/* Education Section
 ********************************************************************* */
-#development {
+#education {
 	padding: 100px 0 100px 0;
 	background-color: #F5F5F5;
 }
@@ -579,9 +579,9 @@ Info Box
 	color: #F8F8F8;
 }
 
-/* Testimonial Section
+/* Experience Section
 ********************************************************************* */
-#testimonial {
+#experience {
 	background-color: #F5F5F5;
 	padding: 100px 0 100px 0;
 	color: #000000;
