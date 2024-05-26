@@ -1,0 +1,94 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+:root {
+    --white: #ffffff;
+    --primary_white_conduit: #faf9fd;
+}
+
+*,html,body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+}
+
+
+/* Changing the CodeStitch Elements */
+#cs-header {
+    border-radius: 15px;
+}
+
+/* change the button's border radius*/
+.cs-button-solid {
+    border-radius: 15px;
+}
+
+/* change the card's border radius*/
+.cs-item {
+    border-radius: 15px;
+}
+
+/* change the cs-box's border radius*/
+.cs-box {
+    border-radius: 15px;
+    margin: 10px;
+    background-color: var(--primary);
+}
+
+/* Change the background of the services section */
+
+#services-1121 {
+    color: #000;
+    background-color: var(--white);
+    .cs-container{
+        .cs-h2 {
+            color: var(--primary);
+        }
+        .cs-item-text{
+            color: #000;
+        }
+        background-color: var(--white);
+    }
+}
+
+#reviews-1739 {
+    background-color: var(--primary_white_conduit);
+
+    .cs-card-group .cs-item{
+        background-color: #00000000;
+    }   
+
+    .cs-info{
+        background-color: var(--white)39;
+    }
+}
+
+/* Change the reviews format of the reviw section  */
+.cs-info {
+    border-radius: 15px;
+}
+
+/* Change the border radius of all images */
+img {
+    border-radius: 15px;
+}
+
+/* Services Container */
+.container-midhun{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .title-midhun{
+        max-width: 24ch;
+        margin: 0;
+        color: var(--primary);
+        font-size: 50px;
+    }
+}
+
+footer{
+    color: #000;
+    background-color: #000000;
+}
