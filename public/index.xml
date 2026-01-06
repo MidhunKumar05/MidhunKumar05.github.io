@@ -2,18 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Midhun Kumar</title>
-    <link>http://localhost:1313/</link>
+    <link>https://MidhunKumar05.github.io/</link>
     <description>Recent content on Midhun Kumar</description>
     <generator>Hugo -- 0.154.2</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 06 Jan 2026 17:58:48 +1100</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>My First Post</title>
-      <link>http://localhost:1313/posts/my-first-post/</link>
-      <pubDate>Tue, 06 Jan 2026 17:58:48 +1100</pubDate>
-      <guid>http://localhost:1313/posts/my-first-post/</guid>
-      <description></description>
-    </item>
+    <atom:link href="https://MidhunKumar05.github.io/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
