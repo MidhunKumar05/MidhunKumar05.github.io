@@ -221,13 +221,42 @@
                         </div>
                         <p class="hidden md:block text-sm text-white mb-3 line-clamp-3 md:line-clamp-4">{{ .description }}</p>
                         
-                        <!-- Learn More button -->
-                        <a href="{{ .link }}" class="bg-white/90 backdrop-blur-sm hover:bg-white text-black text-xs md:text-sm font-medium py-1 md:py-1.5 px-2 md:px-3 rounded-md inline-block transition-all duration-300 transform opacity-100 md:opacity-0 group-hover:opacity-100 w-fit flex items-center shadow-lg hover:shadow-xl">
-                            {{ T "learnMore" }}
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                        </a>
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap gap-2 transform transition-all duration-300 opacity-100 md:opacity-0 group-hover:opacity-100 translate-y-0">
+                            {{ with .demo_link }}
+                            <a href="{{ . }}" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-medium py-1.5 px-3 rounded-md flex items-center shadow-lg hover:shadow-xl transition-colors">
+                                Live Demo 
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                            </a>
+                            {{ end }}
+
+                            {{ with .repo_link }}
+                            <a href="{{ . }}" target="_blank" rel="noopener noreferrer" class="bg-gray-200 hover:bg-gray-300 text-gray-900 text-xs md:text-sm font-medium py-1.5 px-3 rounded-md flex items-center shadow-lg hover:shadow-xl transition-colors">
+                                View Code
+                                <i class="devicon-github-original ml-1.5 text-base"></i>
+                            </a>
+                            {{ end }}
+                            
+                            {{ with .link }}
+                            <a href="{{ . }}" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-gray-100 text-gray-900 text-xs md:text-sm font-medium py-1.5 px-3 rounded-md flex items-center shadow-lg hover:shadow-xl transition-colors">
+                                Visit Website
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-1.5 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </a>
+                            {{ end }}
+
+                            {{ with .blog_link }}
+                            <a href="{{ . }}" target="_blank" rel="noopener noreferrer" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-medium py-1.5 px-3 rounded-md flex items-center shadow-lg hover:shadow-xl transition-colors">
+                                Read Blog
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                            </a>
+                            {{ end }}
+                        </div>
                     </div>
                 </div>
             </div>

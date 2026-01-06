@@ -1,11 +1,34 @@
 [[experience]]
-  role = "Student / Developer"
-  company = "Monash University"
-  company_link = "https://www.monash.edu"
-  period = "Present"
-  country = "Australia"
-  responsibilities = [
-    "Studying Computer Science",
-    "Building cool projects"
-  ]
-  technologies = ["Python", "Git", "Java", "Haskell", "OracleDB", "MongoDB"]
+    role = "Student"
+    company = "Monash University"
+    company_link = "https://www.monash.edu"
+    # period = "Present"
+    country = "Australia"
+    description = "C2001 Computer Science Majoring in Software Development"
+    technologies = ["Python", "Git", "Java", "Haskell", "OracleDB", "MongoDB"]
+
+[[experience]]
+    role = "Founder"
+    company = "Korvant Australia"
+    company_link = "https://heimdallportal.cloud/"
+    period = "Nov 2025 - Present"
+    country = "Australia"
+    description = "AML/CTF + Gaming + Hospitality Management Software"
+    technologies = ["Django", "Auth", "Docker", "NextJS", "Dokploy", "CI/CD", "Traefik"]
+
+[[experience]]
+    role = "Bartender / Staff"
+    company = "Dorset Gardens Hotel"
+    company_link = "https://www.dorsetgardenshotel.com.au/"
+    period = "Jan 2024 - Present"
+    country = "Australia"
+    description = "high pressure customer service environment, time management, supervision of staff and adequate completion of set tasks."
+
+[[experience]]
+    role = "Founder"
+    company = "Conduit Management (K. J. Vagenvoort & M. Kumar partnership)"
+    # company_link = "https://www.monash.edu"
+    period = "Mar 2024 - Nov 2025"
+    country = "Australia"
+    description = "2025 One of Melbourne’s best Digital Marketing Agencies, Leading Excellence and Prestige in Marketing, developed automatic seo rank software in python, generated over 6 figures in leads for clients."
+    technologies = ["Python", "Wix"]

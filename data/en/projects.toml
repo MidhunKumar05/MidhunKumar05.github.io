@@ -1,7 +1,9 @@
 [[projects]]
-  name = "My Portfolio"
-  description = "This website, built with Hugo and the Noir theme."
-  tech_stack = ["Hugo", "Go", "HTML/CSS"]
+  title = "Heimdall Management Software"
+  description = "fullstack in-production and generating revenue"
+  tech = "Django,Express,Postgres,NextJS,MINIO S3"
   link = "https://github.com/MidhunKumar05/MidhunKumar05.github.io"
-  repo_link = "https://github.com/MidhunKumar05/MidhunKumar05.github.io"
-  image = "/images/projects/portfolio.png" # You'll need to add an image here eventually
+  # repo_link = "https://github.com/MidhunKumar05/MidhunKumar05.github.io"
+  demo_link = "https://demo.heimdallportal.cloud" # Add your demo link here
+  blog_link = "https://yourblog.com/post" # Add your blog link here
+  image = "/images/heimdall_arch.png"

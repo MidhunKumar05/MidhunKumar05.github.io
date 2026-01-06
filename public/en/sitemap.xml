@@ -16,6 +16,8 @@
   </url><url>
     <loc>http://localhost:1313/en/categories/</loc>
   </url><url>
+    <loc>http://localhost:1313/en/projects/</loc>
+  </url><url>
     <loc>http://localhost:1313/en/tags/</loc>
   </url>
 </urlset>
