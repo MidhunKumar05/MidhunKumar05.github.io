@@ -1,6 +1,6 @@
 baseURL = 'https://MidhunKumar05.github.io/'
 languageCode = 'en-us'
-title = 'Midhun Kumar'
+title = 'Midhun Kumar | Profile'
 theme = 'hugo-noir'
 
 defaultContentLanguage = "en"
@@ -9,7 +9,7 @@ defaultContentLanguageInSubdir = true
 [languages]
   [languages.en]
     languageName = "English"
-    title = "Midhun Kumar"
+    title = "Midhun Kumar | Profile"
     weight = 1
     contentDir = "content/en"
     [languages.en.menu]
@@ -25,14 +25,18 @@ defaultContentLanguageInSubdir = true
         name = "Blog"
         pageRef = "/blogs"
         weight = 3
+      [[languages.en.menu.main]]
+        name = "Download"
+        pageRef = "/downloads"
+        weight = 4
 
 [params]
   name = "Midhun Kumar"
-  # location = "Your Location"
-  description = "Welcome to my portfolio"
+  location = "Melbourne / Australia"
+  description = "My Resume Portfolio"
   # profile_image = "/images/your-profile.jpg"
-  github = "https://github.com/MidhunKumar05"
-  linkedin = "https://linkedin.com/in/" 
+  github = "https://github.com/Qyrhal"
+  linkedin = "https://www.linkedin.com/in/themidhun/" 
 
 [markup]
   [markup.goldmark]
