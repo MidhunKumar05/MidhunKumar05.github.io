@@ -1,0 +1,51 @@
+baseURL = 'https://MidhunKumar05.github.io/'
+languageCode = 'en-us'
+title = 'Midhun Kumar'
+theme = 'PaperMod'
+
+[params]
+  defaultTheme = 'auto' # dark, light, auto
+  # show/hide specific elements
+  ShowReadingTime = true
+  ShowShareButtons = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowWordCount = true
+  ShowRssButtonInSectionTermList = true
+  UseHugoToc = true
+
+  # Home Info (Profile Mode is also an option)
+  [params.homeInfoParams]
+    Title = "Hi there 👋"
+    Content = "Welcome to my blog"
+
+  # Social Icons on Home - add more as needed
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/MidhunKumar05"
+  # [[params.socialIcons]]
+  #   name = "linkedin"
+  #   url = "https://linkedin.com/in/" 
+
+[menu]
+  [[menu.main]]
+    identifier = "archives"
+    name = "Archives"
+    url = "/archives/"
+    weight = 10
+  [[menu.main]]
+    identifier = "search"
+    name = "Search"
+    url = "/search/"
+    weight = 20
+
+# Allow raw HTML in markdown
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+# For Search
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
