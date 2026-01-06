@@ -2,14 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://MidhunKumar05.github.io/en/about/</loc>
+    <loc>http://localhost:1313/en/about/</loc>
     <lastmod>2026-01-06T18:00:00+11:00</lastmod>
   </url><url>
-    <loc>https://MidhunKumar05.github.io/en/</loc>
+    <loc>http://localhost:1313/en/</loc>
     <lastmod>2026-01-06T18:00:00+11:00</lastmod>
   </url><url>
-    <loc>https://MidhunKumar05.github.io/en/categories/</loc>
+    <loc>http://localhost:1313/en/blogs/</loc>
+    <lastmod>2026-01-06T17:58:48+11:00</lastmod>
   </url><url>
-    <loc>https://MidhunKumar05.github.io/en/tags/</loc>
+    <loc>http://localhost:1313/en/blogs/my-first-post/</loc>
+    <lastmod>2026-01-06T17:58:48+11:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/en/categories/</loc>
+  </url><url>
+    <loc>http://localhost:1313/en/tags/</loc>
   </url>
 </urlset>
