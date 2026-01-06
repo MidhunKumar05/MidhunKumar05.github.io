@@ -8,4 +8,4 @@
     "Studying Computer Science",
     "Building cool projects"
   ]
-  technologies = ["Python", "Hugo", "Git", "Java"]
+  technologies = ["Python", "Git", "Java", "Haskell", "OracleDB", "MongoDB"]
