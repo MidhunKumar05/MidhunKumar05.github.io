@@ -1,0 +1,22 @@
+{{ define "main" }}
+<div class="w-full md:w-3/5 mx-auto py-12 px-4 md:px-0">
+    <div class="w-full p-8 border border-border-primary-light dark:border-border-primary-dark rounded-lg bg-white dark:bg-[#121212] shadow-sm relative overflow-hidden transition-all duration-300">
+        <h1 class="text-4xl font-bold mb-6 text-text-primary-light dark:text-text-primary-dark">{{ .Title }}</h1>
+        
+        {{ if eq .Section "blogs" }}
+            <div class="flex items-center gap-4 mb-8 text-text-secondary-light dark:text-text-secondary-dark">
+                <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+                <div class="flex gap-2">
+                    {{ range .Params.tags }}
+                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md text-xs font-medium">{{ . }}</span>
+                    {{ end }}
+                </div>
+            </div>
+        {{ end }}
+        
+        <div class="prose prose-lg dark:prose-invert max-w-none text-text-secondary-light dark:text-text-secondary-dark">
+            {{ .Content }}
+        </div>
+    </div>
+</div>
+{{ end }}
