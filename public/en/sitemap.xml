@@ -9,15 +9,28 @@
     <lastmod>2026-01-06T18:00:00+11:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/en/blogs/</loc>
-    <lastmod>2026-01-06T17:58:48+11:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/en/blogs/my-first-post/</loc>
-    <lastmod>2026-01-06T17:58:48+11:00</lastmod>
+    <lastmod>2023-03-15T10:30:00+05:30</lastmod>
   </url><url>
     <loc>http://localhost:1313/en/categories/</loc>
+    <lastmod>2023-03-15T10:30:00+05:30</lastmod>
   </url><url>
-    <loc>http://localhost:1313/en/projects/</loc>
+    <loc>http://localhost:1313/en/tags/hugo/</loc>
+    <lastmod>2023-03-15T10:30:00+05:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/en/blogs/my-first-post/</loc>
+    <lastmod>2023-03-15T10:30:00+05:30</lastmod>
   </url><url>
     <loc>http://localhost:1313/en/tags/</loc>
+    <lastmod>2023-03-15T10:30:00+05:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/en/categories/tutorials/</loc>
+    <lastmod>2023-03-15T10:30:00+05:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/en/tags/web-development/</loc>
+    <lastmod>2023-03-15T10:30:00+05:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/en/downloads/</loc>
+  </url><url>
+    <loc>http://localhost:1313/en/projects/</loc>
   </url>
 </urlset>

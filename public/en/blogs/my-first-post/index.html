@@ -56,6 +56,32 @@
         </style>
         
         <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Space Grotesk', 'sans-serif'],
+                        },
+                        colors: {
+                            'bg-primary-light': '#ffffff',
+                            'text-primary-light': '#262626',
+                            'text-secondary-light': '#525252',
+                            'border-primary-light': '#d4d4d8',
+                            'accent-light': '#0284c7',
+                            'bg-primary-dark': '#121212',
+                            'bg-secondary-dark': '#1a1a1a',
+                            'bg-tertiary-dark': '#1a1a1a',
+                            'text-primary-dark': '#f5f5f5',
+                            'text-secondary-dark': '#a3a3a3',
+                            'border-primary-dark': '#404040',
+                            'accent-dark': '#0ea5e9',
+                        }
+                    }
+                }
+            }
+        </script>
         <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
         <script>
             if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -181,7 +207,7 @@
                 
                 <a href="http://localhost:1313/en/blogs/" class="inline-block text-lg text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 text-accent-light dark:text-accent-dark font-semibold">Blog</a>
                 
-                <a href="http://localhost:1313/" class="inline-block text-lg text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 ">Download</a>
+                <a href="http://localhost:1313/en/downloads/" class="inline-block text-lg text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 ">Download</a>
                 
             </nav>
             <div class="hidden md:flex justify-end items-center">
@@ -272,7 +298,7 @@
                 
                 <a href="http://localhost:1313/en/blogs/" class="text-xl text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 text-accent-light dark:text-accent-dark font-semibold" data-menu-link>Blog</a>
                 
-                <a href="http://localhost:1313/" class="text-xl text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 " data-menu-link>Download</a>
+                <a href="http://localhost:1313/en/downloads/" class="text-xl text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 " data-menu-link>Download</a>
                 
             </nav>
             <div class="mt-auto p-6">
@@ -414,20 +440,26 @@
 </script> 
         <main>
             
-<div class="w-1/2 mx-auto py-12">
-    <div class="max-w-3xl mx-auto p-8 border border-border-primary-light dark:border-border-primary-dark rounded-2xl bg-neutral-50 dark:bg-neutral-800">
-        <h1 class="text-4xl font-bold mb-4 text-text-primary-light dark:text-text-primary-dark">My First Post</h1>
+<div class="w-full md:w-3/5 mx-auto py-12 px-4 md:px-0">
+    <div class="w-full p-8 border border-border-primary-light dark:border-border-primary-dark rounded-lg bg-white dark:bg-[#121212] shadow-sm relative overflow-hidden transition-all duration-300">
+        <h1 class="text-4xl font-bold mb-6 text-text-primary-light dark:text-text-primary-dark">My First Post</h1>
+        
         
             <div class="flex items-center gap-4 mb-8 text-text-secondary-light dark:text-text-secondary-dark">
-                <time datetime="2026-01-06">January 6, 2026</time>
+                <time datetime="2023-03-15">March 15, 2023</time>
                 <div class="flex gap-2">
+                    
+                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md text-xs font-medium">hugo</span>
+                    
+                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md text-xs font-medium">web development</span>
                     
                 </div>
             </div>
         
         
-        <div class="prose prose-invert max-w-none">
-            
+        <div class="prose prose-lg dark:prose-invert max-w-none text-text-secondary-light dark:text-text-secondary-dark">
+            <p>Your post content here&hellip;</p>
+
         </div>
     </div>
 </div>

@@ -18,9 +18,9 @@
     <item>
       <title>My First Post</title>
       <link>http://localhost:1313/en/blogs/my-first-post/</link>
-      <pubDate>Tue, 06 Jan 2026 17:58:48 +1100</pubDate>
+      <pubDate>Wed, 15 Mar 2023 10:30:00 +0530</pubDate>
       <guid>http://localhost:1313/en/blogs/my-first-post/</guid>
-      <description></description>
+      <description>&lt;p&gt;Your post content here&amp;hellip;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

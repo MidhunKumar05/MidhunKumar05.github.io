@@ -56,6 +56,32 @@
         </style>
         
         <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Space Grotesk', 'sans-serif'],
+                        },
+                        colors: {
+                            'bg-primary-light': '#ffffff',
+                            'text-primary-light': '#262626',
+                            'text-secondary-light': '#525252',
+                            'border-primary-light': '#d4d4d8',
+                            'accent-light': '#0284c7',
+                            'bg-primary-dark': '#121212',
+                            'bg-secondary-dark': '#1a1a1a',
+                            'bg-tertiary-dark': '#1a1a1a',
+                            'text-primary-dark': '#f5f5f5',
+                            'text-secondary-dark': '#a3a3a3',
+                            'border-primary-dark': '#404040',
+                            'accent-dark': '#0ea5e9',
+                        }
+                    }
+                }
+            }
+        </script>
         <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
         <script>
             if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -181,7 +207,7 @@
                 
                 <a href="http://localhost:1313/en/blogs/" class="inline-block text-lg text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 ">Blog</a>
                 
-                <a href="http://localhost:1313/" class="inline-block text-lg text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 ">Download</a>
+                <a href="http://localhost:1313/en/downloads/" class="inline-block text-lg text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 ">Download</a>
                 
             </nav>
             <div class="hidden md:flex justify-end items-center">
@@ -272,7 +298,7 @@
                 
                 <a href="http://localhost:1313/en/blogs/" class="text-xl text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 " data-menu-link>Blog</a>
                 
-                <a href="http://localhost:1313/" class="text-xl text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 " data-menu-link>Download</a>
+                <a href="http://localhost:1313/en/downloads/" class="text-xl text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-300 " data-menu-link>Download</a>
                 
             </nav>
             <div class="mt-auto p-6">
@@ -417,6 +443,20 @@
 <div class="container mx-auto px-4 py-12">
     <h1 class="text-4xl font-bold mb-8">Tags</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <div class="border border-gray-700 rounded-lg p-6 bg-[#1a1a1a]">
+            <a href="/en/tags/hugo/" class="text-xl font-semibold hover:text-gray-300">
+                Hugo
+            </a>
+            <span class="text-gray-400 ml-2">(1)</span>
+        </div>
+        
+        <div class="border border-gray-700 rounded-lg p-6 bg-[#1a1a1a]">
+            <a href="/en/tags/web-development/" class="text-xl font-semibold hover:text-gray-300">
+                Web Development
+            </a>
+            <span class="text-gray-400 ml-2">(1)</span>
+        </div>
         
     </div>
 </div>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Blogs on Midhun Kumar | Profile</title>
-    <link>http://localhost:1313/en/blogs/</link>
-    <description>Recent content in Blogs on Midhun Kumar | Profile</description>
+    <title>Tutorials on Midhun Kumar | Profile</title>
+    <link>http://localhost:1313/en/categories/tutorials/</link>
+    <description>Recent content in Tutorials on Midhun Kumar | Profile</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 15 Mar 2023 10:30:00 +0530</lastBuildDate>
-    <atom:link href="http://localhost:1313/en/blogs/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/en/categories/tutorials/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>My First Post</title>
       <link>http://localhost:1313/en/blogs/my-first-post/</link>
