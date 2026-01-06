@@ -1,0 +1,7 @@
+[[projects]]
+  name = "My Portfolio"
+  description = "This website, built with Hugo and the Noir theme."
+  tech_stack = ["Hugo", "Go", "HTML/CSS"]
+  link = "https://github.com/MidhunKumar05/MidhunKumar05.github.io"
+  repo_link = "https://github.com/MidhunKumar05/MidhunKumar05.github.io"
+  image = "/images/projects/portfolio.png" # You'll need to add an image here eventually

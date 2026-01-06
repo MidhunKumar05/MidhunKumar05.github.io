@@ -1,0 +1,10 @@
+row1 = [
+  { icon = "devicon-python-plain", name = "Python" },
+  { icon = "devicon-git-plain", name = "Git" },
+  { icon = "devicon-hugo-plain", name = "Hugo" }
+]
+row2 = [
+  { icon = "devicon-javascript-plain", name = "JavaScript" },
+  { icon = "devicon-html5-plain", name = "HTML5" },
+  { icon = "devicon-css3-plain", name = "CSS3" }
+]

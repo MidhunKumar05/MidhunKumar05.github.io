@@ -1,0 +1,11 @@
+[[experience]]
+  role = "Student / Developer"
+  company = "Monash University"
+  company_link = "https://www.monash.edu"
+  period = "Present"
+  country = "Australia"
+  responsibilities = [
+    "Studying Computer Science",
+    "Building cool projects"
+  ]
+  technologies = ["Python", "Hugo", "Git"]
