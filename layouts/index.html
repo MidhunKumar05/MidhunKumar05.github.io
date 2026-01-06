@@ -271,36 +271,37 @@
     {{ end }}
 
     <!-- Blog Section -->
-    {{ $blogsData := index site.Data .Language.Lang "blogs" }}
-    {{ $blogs := cond (and $blogsData $blogsData.blogs) $blogsData.blogs site.Params.blogs }}
+    {{ $blogSection := site.GetPage "section" "blogs" }}
+    {{ $blogPages := $blogSection.Pages }}
+    {{ if eq (len $blogPages) 0 }}
+        {{ $blogPages = where site.RegularPages "Section" "blogs" }}
+    {{ end }}
     
-    {{ with $blogs }}
+    {{ if gt (len $blogPages) 0 }}
     <section class="mt-20 mb-20">
         <div class="flex justify-between items-center mb-8">
-            <h2 class="text-4xl font-bold">{{ T "blogsTitle" }}</h2>
+            <h2 class="text-4xl font-bold">{{ T "blogsTitle" | default "Blogs" }}</h2>
         </div>
         <div class="space-y-8">
-            {{ range first 3 . }}
+            {{ range first 3 $blogPages }}
             <div class="group">
-                <p class="text-gray-400 text-sm mb-1">{{ .date }}</p>
-                <a href="{{ .link }}" class="block group" target="_blank">
+                <p class="text-gray-400 text-sm mb-1">{{ .Date.Format "2006-01-02" }}</p>
+                <a href="{{ .Permalink }}" class="block group">
                     <h3 class="inline-flex items-center text-xl font-medium text-accent-light dark:text-accent-dark hover:text-text-primary-light dark:hover:text-text-primary-dark transition-colors duration-200 mb-3">
-                        {{ .title }}
+                        {{ .Title }}
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2 opacity-70 group-hover:opacity-100 transition-opacity duration-200">
                             <path d="M7 17l9.2-9.2M17 17V7H7"/>
                         </svg>
                     </h3>
                 </a>    
-                <p class="text-gray-400">{{ .summary }}</p>
+                <p class="text-gray-400">{{ .Description | default .Summary }}</p>
             </div>
             {{ end }}
         </div>
         <div class="flex justify-center mt-8">
-            <a href="{{ "blogs/" | absLangURL }}" class="text-blue-500 hover:text-blue-400 transition-colors duration-200 text-lg">{{ T "viewAll" }}</a>
+            <a href="{{ "blogs/" | absLangURL }}" class="text-blue-500 hover:text-blue-400 transition-colors duration-200 text-lg">{{ T "viewAll" | default "View All" }}</a>
         </div>
     </section>
-    {{ else }}
-    {{ warnf "No blog data found for language %q. Please define either data/%s/blogs.(yaml|toml|json) or params.blogs in config." .Language.Lang .Language.Lang }}
     {{ end }}
 </div>
 

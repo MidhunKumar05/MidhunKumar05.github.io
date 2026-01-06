@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Home on Midhun Kumar | Profile</title>
-    <link>http://localhost:1313/en/</link>
-    <description>Recent content in Home on Midhun Kumar | Profile</description>
+    <title>Summary on Midhun Kumar | Profile</title>
+    <link>http://localhost:1313/en/categories/summary/</link>
+    <description>Recent content in Summary on Midhun Kumar | Profile</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 06 Jan 2026 18:00:00 +1100</lastBuildDate>
-    <atom:link href="http://localhost:1313/en/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>About Me</title>
-      <link>http://localhost:1313/en/about/</link>
-      <pubDate>Tue, 06 Jan 2026 18:00:00 +1100</pubDate>
-      <guid>http://localhost:1313/en/about/</guid>
-      <description>&lt;p&gt;Welcome to my portfolio.&lt;/p&gt;</description>
-    </item>
+    <lastBuildDate>Tue, 06 Jan 2026 10:30:00 +1100</lastBuildDate>
+    <atom:link href="http://localhost:1313/en/categories/summary/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>The Heimdall Management Project</title>
       <link>http://localhost:1313/en/blogs/heimdall-overview/</link>

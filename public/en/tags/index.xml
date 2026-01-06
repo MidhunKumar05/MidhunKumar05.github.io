@@ -6,20 +6,41 @@
     <description>Recent content in Tags on Midhun Kumar | Profile</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 15 Mar 2023 10:30:00 +0530</lastBuildDate>
+    <lastBuildDate>Tue, 06 Jan 2026 10:30:00 +1100</lastBuildDate>
     <atom:link href="http://localhost:1313/en/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Hugo</title>
-      <link>http://localhost:1313/en/tags/hugo/</link>
-      <pubDate>Wed, 15 Mar 2023 10:30:00 +0530</pubDate>
-      <guid>http://localhost:1313/en/tags/hugo/</guid>
+      <title>Axiom</title>
+      <link>http://localhost:1313/en/tags/axiom/</link>
+      <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
+      <guid>http://localhost:1313/en/tags/axiom/</guid>
       <description></description>
     </item>
     <item>
-      <title>Web Development</title>
-      <link>http://localhost:1313/en/tags/web-development/</link>
-      <pubDate>Wed, 15 Mar 2023 10:30:00 +0530</pubDate>
-      <guid>http://localhost:1313/en/tags/web-development/</guid>
+      <title>Django</title>
+      <link>http://localhost:1313/en/tags/django/</link>
+      <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
+      <guid>http://localhost:1313/en/tags/django/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>NextJS</title>
+      <link>http://localhost:1313/en/tags/nextjs/</link>
+      <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
+      <guid>http://localhost:1313/en/tags/nextjs/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>S3 Storage</title>
+      <link>http://localhost:1313/en/tags/s3-storage/</link>
+      <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
+      <guid>http://localhost:1313/en/tags/s3-storage/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Stmplib</title>
+      <link>http://localhost:1313/en/tags/stmplib/</link>
+      <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
+      <guid>http://localhost:1313/en/tags/stmplib/</guid>
       <description></description>
     </item>
   </channel>

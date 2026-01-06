@@ -6,13 +6,13 @@
     <description>Recent content in Categories on Midhun Kumar | Profile</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 15 Mar 2023 10:30:00 +0530</lastBuildDate>
+    <lastBuildDate>Tue, 06 Jan 2026 10:30:00 +1100</lastBuildDate>
     <atom:link href="http://localhost:1313/en/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Tutorials</title>
-      <link>http://localhost:1313/en/categories/tutorials/</link>
-      <pubDate>Wed, 15 Mar 2023 10:30:00 +0530</pubDate>
-      <guid>http://localhost:1313/en/categories/tutorials/</guid>
+      <title>Summary</title>
+      <link>http://localhost:1313/en/categories/summary/</link>
+      <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
+      <guid>http://localhost:1313/en/categories/summary/</guid>
       <description></description>
     </item>
   </channel>
