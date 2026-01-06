@@ -68,6 +68,20 @@
                                 <span class="text-xl">{{ .name }}</span>
                             </div>
                         {{- end -}}
+                        {{/* Duplicates 2 */}}
+                        {{- range .row1 -}}
+                            <div class="carousel-item">
+                                <i class="{{ .icon }}"></i>
+                                <span class="text-xl">{{ .name }}</span>
+                            </div>
+                        {{- end -}}
+                        {{/* Duplicates 3 */}}
+                        {{- range .row1 -}}
+                            <div class="carousel-item">
+                                <i class="{{ .icon }}"></i>
+                                <span class="text-xl">{{ .name }}</span>
+                            </div>
+                        {{- end -}}
                     </div>
                 </div>
 
@@ -86,6 +100,20 @@
                                 <span class="text-xl">{{ .name }}</span>
                             </div>
                         {{- end -}}
+                        {{/* Duplicates 2 */}}
+                        {{- range .row2 -}}
+                            <div class="carousel-item">
+                                <i class="{{ .icon }}"></i>
+                                <span class="text-xl">{{ .name }}</span>
+                            </div>
+                        {{- end -}}
+                        {{/* Duplicates 3 */}}
+                        {{- range .row2 -}}
+                            <div class="carousel-item">
+                                <i class="{{ .icon }}"></i>
+                                <span class="text-xl">{{ .name }}</span>
+                            </div>
+                        {{- end -}}
                     </div>
                 </div>
 
@@ -98,6 +126,20 @@
                             </div>
                         {{- end -}}
                         {{/* Duplicates */}}
+                        {{- range .row3 -}}
+                            <div class="carousel-item">
+                                <i class="{{ .icon }}"></i>
+                                <span class="text-xl">{{ .name }}</span>
+                            </div>
+                        {{- end -}}
+                         {{/* Duplicates 2 */}}
+                        {{- range .row3 -}}
+                            <div class="carousel-item">
+                                <i class="{{ .icon }}"></i>
+                                <span class="text-xl">{{ .name }}</span>
+                            </div>
+                        {{- end -}}
+                        {{/* Duplicates 3 */}}
                         {{- range .row3 -}}
                             <div class="carousel-item">
                                 <i class="{{ .icon }}"></i>
@@ -295,13 +337,13 @@
         transform: translateX(0);
     }
     100% {
-        transform: translateX(calc(-100% / 2));
+        transform: translateX(calc(-100% / 4));
     }
 }
 
 @keyframes scroll-left-to-right {
     0% {
-        transform: translateX(calc(-100% / 2));
+        transform: translateX(calc(-100% / 4));
     }
     100% {
         transform: translateX(0);
@@ -313,7 +355,7 @@
         transform: translateX(0);
     }
     100% {
-        transform: translateX(calc(-100% / 2));
+        transform: translateX(calc(-100% / 4));
     }
 }
 
