@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Home on Midhun Kumar | Profile</title>
-    <link>http://localhost:1313/en/</link>
-    <description>Recent content in Home on Midhun Kumar | Profile</description>
+    <title>Kubernetes on Midhun Kumar | Profile</title>
+    <link>http://localhost:1313/en/tags/kubernetes/</link>
+    <description>Recent content in Kubernetes on Midhun Kumar | Profile</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 11 Apr 2026 10:30:00 +1100</lastBuildDate>
-    <atom:link href="http://localhost:1313/en/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/en/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Building Sentinel: Compliance Software for Australian Hospitality</title>
       <link>http://localhost:1313/en/blogs/sentinel-overview/</link>
       <pubDate>Sat, 11 Apr 2026 10:30:00 +1100</pubDate>
       <guid>http://localhost:1313/en/blogs/sentinel-overview/</guid>
       <description>&lt;p&gt;I currently work as a Bartender in the North Eastern Suburbs of Melbourne at a local Pub Chain. One of those venues is called Dorset Gardens Hotel. A medium to large sized venue under the management of a organisation named JMS Hospitality.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-problem&#34;&gt;The Problem&lt;/h2&gt;&#xA;&lt;p&gt;As per Australian laws, all employees must have certificates in order to be in certain departments. If serving alcohol, you must have a Victorian RSA. In gaming? RSG and an RSA. And not to forget about the certifications the venue itself must hold such as Anti-Money Laundering and Counter Terrorism Financing documents.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>About Me</title>
-      <link>http://localhost:1313/en/about/</link>
-      <pubDate>Tue, 06 Jan 2026 18:00:00 +1100</pubDate>
-      <guid>http://localhost:1313/en/about/</guid>
-      <description>&lt;p&gt;I&amp;rsquo;m Midhun Kumar — a Computer Science student at Monash University and founder of Korvant Australia, where I&amp;rsquo;m building Sentinel: a compliance and certificate management platform for the Australian hospitality industry.&lt;/p&gt;&#xA;&lt;p&gt;My interest in software comes from wanting to solve real operational problems. Working at Dorset Gardens Hotel gave me first-hand exposure to the complexity of managing RSA certifications, gaming licence obligations, and AML/CTF compliance across a multi-venue hospitality group. That experience became the foundation for Sentinel, which is now in production and serving clients including JMS Hospitality.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

@@ -1,0 +1,21 @@
+[[honors]]
+  institution = "Monash University"
+  title = "Bachelor of Computer Science — Software Development"
+  date = "2023 – Present"
+
+[[honors]]
+  institution = "Korvant Australia"
+  title = "Founder — Sentinel Compliance Platform"
+  date = "Nov 2025 – Present"
+
+[[certifications]]
+  title = "Responsible Service of Alcohol (RSA)"
+  date = "Victorian Commission for Gambling and Liquor Regulation"
+  url = "https://www.vcglr.vic.gov.au/"
+
+[[voluntary]]
+  organization = "Monash University"
+  url = "https://www.monash.edu"
+  role = "Student Community"
+  period = "2023 – Present"
+  description = "Participating in university academic and student life at Monash's Clayton campus."

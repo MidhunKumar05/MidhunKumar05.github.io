@@ -3,14 +3,18 @@ row1 = [
   { icon = "devicon-git-plain", name = "Git" },
   { icon = "devicon-hugo-plain", name = "Hugo" },
   { icon = "devicon-java-plain", name = "Java" },
-  { icon = "devicon-docker-plain", name = "Docker" }
+  { icon = "devicon-docker-plain", name = "Docker" },
+  { icon = "devicon-kubernetes-plain", name = "Kubernetes" },
+  { icon = "devicon-argocd-plain", name = "ArgoCD" }
 ]
 row2 = [
   { icon = "devicon-typescript-plain", name = "Typescript" },
   { icon = "devicon-html5-plain", name = "HTML5" },
   { icon = "devicon-css3-plain", name = "CSS3" },
   { icon = "devicon-nextjs-plain", name = "NextJS" },
-  { icon = "devicon-express-original", name = "Express" }
+  { icon = "devicon-express-original", name = "Express" },
+  { icon = "devicon-kubernetes-plain", name = "Kubernetes" },
+  { icon = "devicon-argocd-plain", name = "ArgoCD" }
 ]
 row3 = [
   { icon = "devicon-linux-plain", name = "Linux" },
@@ -18,5 +22,7 @@ row3 = [
   { icon = "devicon-bash-plain", name = "Bash" },
   { icon = "devicon-nginx-plain", name = "Nginx" },
   { icon = "devicon-postgresql-plain", name = "Postgres" },
-  { icon = "devicon-redis-plain", name = "Redis" }
+  { icon = "devicon-redis-plain", name = "Redis" },
+  { icon = "devicon-kubernetes-plain", name = "Kubernetes" },
+  { icon = "devicon-argocd-plain", name = "ArgoCD" }
 ]

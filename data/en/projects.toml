@@ -1,9 +1,7 @@
 [[projects]]
-  title = "Heimdall Management Software"
-  description = "fullstack in-production and generating revenue"
-  tech = "Django,Express,Postgres,NextJS,MINIO S3"
-  link = "https://github.com/MidhunKumar05/MidhunKumar05.github.io"
-  # repo_link = "https://github.com/MidhunKumar05/MidhunKumar05.github.io"
-  demo_link = "https://demo.heimdallportal.cloud" # Add your demo link here
-  blog_link = "https://yourblog.com/post" # Add your blog link here
+  title = "Sentinel"
+  description = "A multi-tenant SaaS compliance and certificate management platform built for Australian hospitality venues. Sentinel centralises employee certification tracking (RSA, Food Safety, First Aid), automates AML/CTF regulatory compliance workflows, and provides real-time compliance dashboards across multi-venue operations. Built for gaming-licensed hotels, pubs, and hospitality groups navigating Victoria's strict regulatory environment. In production and generating revenue — active client: JMS Hospitality."
+  tech = "Next.js 16,Django 6,PostgreSQL,Redis,AWS S3,Docker,TypeScript,Python"
+  demo_link = "https://demo.korvant.au"
+  blog_link = "/en/blogs/sentinel-overview" 
   image = "/images/heimdall_arch.png"

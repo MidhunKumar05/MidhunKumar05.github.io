@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on Midhun Kumar | Profile</title>
+    <link>http://localhost:1313/en/tags/docker/</link>
+    <description>Recent content in Docker on Midhun Kumar | Profile</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 06 Jan 2026 10:30:00 +1100</lastBuildDate>
+    <atom:link href="http://localhost:1313/en/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Building Sentinel: Compliance Software for Australian Hospitality</title>
+      <link>http://localhost:1313/en/blogs/sentinel-overview/</link>
+      <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
+      <guid>http://localhost:1313/en/blogs/sentinel-overview/</guid>
+      <description>&lt;p&gt;I currently work as a Bartender in the North Eastern Suburbs of Melbourne at a local Pub Chain. One of those venues is called Dorset Gardens Hotel. A medium to large sized venue under the management of a organisation named JMS Hospitality.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-problem&#34;&gt;The Problem&lt;/h2&gt;&#xA;&lt;p&gt;As per Australian laws, all employees must have certificates in order to&lt;/p&gt;&#xA;&lt;h2 id=&#34;what-sentinel-does&#34;&gt;What Sentinel Does&lt;/h2&gt;&#xA;&lt;p&gt;Sentinel is a multi-tenant SaaS platform that centralises compliance and certificate management for Australian hospitality venues. The core idea is simple: give an operator a single place to see the compliance status of every employee across every venue they run, with automated alerts before certificates expire and structured workflows for the regulatory reporting they are already required to do.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

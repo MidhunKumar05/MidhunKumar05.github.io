@@ -2,19 +2,19 @@
     role = "Student"
     company = "Monash University"
     company_link = "https://www.monash.edu"
-    # period = "Present"
+    period = "2023 - Present"
     country = "Australia"
-    description = "C2001 Computer Science Majoring in Software Development"
+    description = "Bachelor of Computer Science, majoring in Software Development. Coursework covers algorithms, systems programming, databases, and software engineering principles."
     technologies = ["Python", "Git", "Java", "Haskell", "OracleDB", "MongoDB"]
 
 [[experience]]
     role = "Founder"
     company = "Korvant Australia"
-    company_link = "https://heimdallportal.cloud/"
+    company_link = "https://korvant.au/"
     period = "Nov 2025 - Present"
     country = "Australia"
-    description = "AML/CTF + Gaming + Hospitality Management Software"
-    technologies = ["Django", "Auth", "Docker", "NextJS", "Dokploy", "CI/CD", "Traefik"]
+    description = "Building Sentinel, a multi-tenant SaaS compliance and certificate management platform for the Australian hospitality industry. Sentinel automates AML/CTF regulatory compliance, employee certification tracking (RSA, Food Safety, First Aid), and multi-venue operational oversight. Serving clients including JMS Hospitality, a Melbourne-based group operating 4+ properties across Greater Melbourne."
+    technologies = ["Django", "Next.js", "PostgreSQL", "Redis", "AWS S3", "Docker", "TypeScript", "Python"]
 
 [[experience]]
     role = "Bartender / Staff"
@@ -22,13 +22,12 @@
     company_link = "https://www.dorsetgardenshotel.com.au/"
     period = "Jan 2024 - Present"
     country = "Australia"
-    description = "high pressure customer service environment, time management, supervision of staff and adequate completion of set tasks."
+    description = "Customer-facing hospitality role at a JMS Hospitality property — a high-volume Eastern suburbs venue with gaming facilities, bistro, and nightclub. Hands-on experience with RSA compliance, gaming regulation requirements, and multi-department operations directly informed the development of Sentinel."
 
 [[experience]]
     role = "Founder"
-    company = "Conduit Management (K. J. Vagenvoort & M. Kumar partnership)"
-    # company_link = "https://www.monash.edu"
+    company = "Conduit Management"
     period = "Mar 2024 - Nov 2025"
     country = "Australia"
-    description = "2025 One of Melbourne’s best Digital Marketing Agencies, Leading Excellence and Prestige in Marketing, developed automatic seo rank software in python, generated over 6 figures in leads for clients."
+    description = "Co-founded a Melbourne digital marketing agency (partnership with K. J. Vagenvoort). Developed proprietary SEO ranking automation software in Python and delivered campaigns that generated over six figures in qualified leads for clients."
     technologies = ["Python", "Wix"]

@@ -9,10 +9,10 @@
     <lastBuildDate>Tue, 06 Jan 2026 10:30:00 +1100</lastBuildDate>
     <atom:link href="http://localhost:1313/en/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Axiom</title>
-      <link>http://localhost:1313/en/tags/axiom/</link>
+      <title>AWS S3</title>
+      <link>http://localhost:1313/en/tags/aws-s3/</link>
       <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
-      <guid>http://localhost:1313/en/tags/axiom/</guid>
+      <guid>http://localhost:1313/en/tags/aws-s3/</guid>
       <description></description>
     </item>
     <item>
@@ -23,24 +23,31 @@
       <description></description>
     </item>
     <item>
-      <title>NextJS</title>
-      <link>http://localhost:1313/en/tags/nextjs/</link>
+      <title>Next.js</title>
+      <link>http://localhost:1313/en/tags/next.js/</link>
       <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
-      <guid>http://localhost:1313/en/tags/nextjs/</guid>
+      <guid>http://localhost:1313/en/tags/next.js/</guid>
       <description></description>
     </item>
     <item>
-      <title>S3 Storage</title>
-      <link>http://localhost:1313/en/tags/s3-storage/</link>
+      <title>PostgreSQL</title>
+      <link>http://localhost:1313/en/tags/postgresql/</link>
       <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
-      <guid>http://localhost:1313/en/tags/s3-storage/</guid>
+      <guid>http://localhost:1313/en/tags/postgresql/</guid>
       <description></description>
     </item>
     <item>
-      <title>Stmplib</title>
-      <link>http://localhost:1313/en/tags/stmplib/</link>
+      <title>SaaS</title>
+      <link>http://localhost:1313/en/tags/saas/</link>
       <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
-      <guid>http://localhost:1313/en/tags/stmplib/</guid>
+      <guid>http://localhost:1313/en/tags/saas/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>TypeScript</title>
+      <link>http://localhost:1313/en/tags/typescript/</link>
+      <pubDate>Tue, 06 Jan 2026 10:30:00 +1100</pubDate>
+      <guid>http://localhost:1313/en/tags/typescript/</guid>
       <description></description>
     </item>
   </channel>
