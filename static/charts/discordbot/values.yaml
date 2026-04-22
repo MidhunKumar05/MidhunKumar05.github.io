@@ -1,0 +1,86 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/midhunkumar05/discordbot
+  pullPolicy: IfNotPresent
+
+  backendImage:
+    repository: ghcr.io/midhunkumar05/discordbot
+    tag: latest
+
+  frontendImage:
+    repository: ghcr.io/midhunkumar05/discordbot-frontend
+    tag: latest
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+services:
+  - name: api
+    type: ClusterIP
+    port: 8000
+    targetPort: 8000
+    selector: api
+  - name: frontend
+    type: ClusterIP
+    port: 2222
+    targetPort: 2222
+    selector: frontend
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+env:
+  DEBUG: "false"
+  POSTGRES_USER: ""
+  POSTGRES_PASSWORD: ""
+  POSTGRES_DB: ""
+  DISCORD_BOT_TOKEN: ""
+  PREFIX_COMMAND: "!"
+  DISCORD_GUILD_ID: ""
+  INTERNAL_API_SECRET: ""
+  BACKEND_URL: ""
+  FRONTEND_URL: ""
+  BOTMASTER: ""
+  START_BOT: "true"
+  AUTO_SYNC_COMMANDS: "true"
+  ALLOWED_HOSTS: "*"
+  CORS_ALLOWED_ORIGINS: ""
+  DISCORD_CLIENT_ID: ""
+  DISCORD_CLIENT_SECRET: ""
+  NEXTAUTH_SECRET: ""
+  NEXTAUTH_URL: ""
+  DJANGO_API_URL: ""
+
+persistence:
+  enabled: false
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: ""
+    database: ""
+  primary:
+    persistence:
+      enabled: false
+      size: 1Gi

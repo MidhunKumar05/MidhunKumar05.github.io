@@ -1,0 +1,14 @@
+apiVersion: v2
+name: discordbot
+description: A Helm chart for deploying the Discord Bot application
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - discord
+  - bot
+  - django
+  - discordjs
+maintainers:
+  - name: MidhunKumar05
+    email: midhun@example.com

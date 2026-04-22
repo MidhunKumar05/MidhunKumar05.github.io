@@ -1,0 +1,43 @@
+{{/*
+Create a YAML-formatted notes template.
+*/}}
+# Discord Bot Helm Chart
+
+This chart deploys the Discord Bot application to your Kubernetes cluster.
+
+## Services
+
+The following services are exposed:
+
+- **API**: Port 8000 (internal)
+- **Frontend**: Port 2222 (internal)
+
+## Configuration
+
+To configure the chart, create a `values.yaml` file with your settings:
+
+```yaml
+env:
+  DISCORD_BOT_TOKEN: "your-bot-token"
+  DISCORD_GUILD_ID: "your-guild-id"
+  # ... other env vars
+```
+
+## Installation
+
+```bash
+# Add the repository
+helm repo add midhunkumar05 https://midhunkumar05.github.io
+
+# Update repositories
+helm repo update
+
+# Install the chart
+helm install discordbot midhunkumar05/discordbot -f values.yaml
+```
+
+## Upgrading
+
+```bash
+helm upgrade discordbot midhunkumar05/discordbot -f values.yaml
+```
