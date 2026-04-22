@@ -16,6 +16,6 @@ entries:
         - name: MidhunKumar05
           email: midhun@example.com
       URLs:
-        - https://midhunkumar05.github.io/charts/discordbot-0.1.0.tgz
+        - https://midhunkumar05.github.io/charts/discordbot/
       created: 2026-04-23T00:00:00Z
       digest: sha256-placeholder
