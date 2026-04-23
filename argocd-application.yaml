@@ -1,0 +1,73 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: discordbot
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://midhunkumar05.github.io
+    chart: discordbot
+    targetRevision: 0.1.1
+    helm:
+      releaseName: discordbot
+      valuesObject:
+        replicaCount: 1
+        image:
+          backendImage:
+            repository: ghcr.io/monashautomation/discordbot/backend
+            tag: latest
+          frontendImage:
+            repository: ghcr.io/monashautomation/discordbot/frontend
+            tag: latest
+        services:
+          - name: api
+            type: ClusterIP
+            port: 8000
+            targetPort: 8000
+            selector: api
+          - name: frontend
+            type: ClusterIP
+            port: 2222
+            targetPort: 2222
+            selector: frontend
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+        env:
+          DEBUG: "false"
+          POSTGRES_USER: "postgres"
+          POSTGRES_DB: "discordbot"
+          PREFIX_COMMAND: "!"
+          START_BOT: "true"
+          AUTO_SYNC_COMMANDS: "true"
+          ALLOWED_HOSTS: "*"
+        postgresql:
+          enabled: true
+          auth:
+            database: "discordbot"
+          primary:
+            nodeSelector:
+              kubernetes.io/arch: amd64
+            tolerations:
+              - key: kubernetes.io/arch
+                operator: NotEqual
+                value: arm64
+                effect: NoSchedule
+            persistence:
+              enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: discordbot
+  imagePullSecrets:
+    - name: ghcr-credentials
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
