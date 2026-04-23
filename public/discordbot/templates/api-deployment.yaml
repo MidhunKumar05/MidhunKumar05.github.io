@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "discordbot.fullname" . }}-api
+  labels:
+    {{- include "discordbot.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "discordbot.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      component: api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "discordbot.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: api
+    spec:
+      containers:
+        - name: api
+          image: "{{ .Values.image.backendImage.repository }}:{{ .Values.image.backendImage.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.api.port }}
+              protocol: TCP
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql-secret
+                  key: postgres-password
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql-secret
+                  key: postgres-password
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresql.auth.database }}
+            - name: DATABASE_URL
+              value: "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@{{ .Release.Name }}-postgresql:5432/{{ .Values.postgresql.auth.database }}"
+            - name: DEBUG
+              value: {{ .Values.env.DEBUG }}
+            - name: DISCORD_BOT_TOKEN
+              value: {{ .Values.env.DISCORD_BOT_TOKEN }}
+            - name: PREFIX_COMMAND
+              value: {{ .Values.env.PREFIX_COMMAND }}
+            - name: DISCORD_GUILD_ID
+              value: {{ .Values.env.DISCORD_GUILD_ID }}
+            - name: INTERNAL_API_SECRET
+              value: {{ .Values.env.INTERNAL_API_SECRET }}
+            - name: BACKEND_URL
+              value: {{ .Values.env.BACKEND_URL }}
+            - name: FRONTEND_URL
+              value: {{ .Values.env.FRONTEND_URL }}
+            - name: BOTMASTER
+              value: {{ .Values.env.BOTMASTER }}
+            - name: START_BOT
+              value: "false"
+            - name: AUTO_SYNC_COMMANDS
+              value: {{ .Values.env.AUTO_SYNC_COMMANDS }}
+            - name: ALLOWED_HOSTS
+              value: {{ .Values.env.ALLOWED_HOSTS }}
+          resources:
+            {{- toYaml .Values.resources | nindent 10 }}

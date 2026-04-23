@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "discordbot.fullname" . }}-frontend
+  labels:
+    {{- include "discordbot.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "discordbot.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "discordbot.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "{{ .Values.image.frontendImage.repository }}:{{ .Values.image.frontendImage.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.frontend.port }}
+              protocol: TCP
+          env:
+            - name: DISCORD_CLIENT_ID
+              value: {{ .Values.env.DISCORD_CLIENT_ID }}
+            - name: DISCORD_CLIENT_SECRET
+              value: {{ .Values.env.DISCORD_CLIENT_SECRET }}
+            - name: NEXTAUTH_SECRET
+              value: {{ .Values.env.NEXTAUTH_SECRET }}
+            - name: NEXTAUTH_URL
+              value: {{ .Values.env.NEXTAUTH_URL }}
+            - name: DJANGO_API_URL
+              value: "http://{{ include "discordbot.fullname" . }}-api:{{ .Values.service.api.port }}"
+            - name: INTERNAL_API_SECRET
+              value: {{ .Values.env.INTERNAL_API_SECRET }}
+            - name: FRONTEND_URL
+              value: {{ .Values.env.FRONTEND_URL }}
+          resources:
+            {{- toYaml .Values.resources | nindent 10 }}
