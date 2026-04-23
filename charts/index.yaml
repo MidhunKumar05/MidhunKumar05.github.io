@@ -3,7 +3,25 @@ entries:
   discordbot:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-04-23T20:34:01.160718+10:00"
+    created: "2026-04-23T20:42:32.711912+10:00"
+    description: A Helm chart for deploying the Discord Bot application
+    digest: 155ef8877b9e50b4fa777a0aceb1b05ccc72c1227e4b6fe168e845ed7d4683ed
+    keywords:
+    - discord
+    - bot
+    - django
+    - discordjs
+    maintainers:
+    - email: midhun@example.com
+      name: MidhunKumar05
+    name: discordbot
+    type: application
+    urls:
+    - https://midhunkumar05.github.io/charts/discordbot-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-04-23T20:42:32.711634+10:00"
     description: A Helm chart for deploying the Discord Bot application
     digest: f5b39303493324e3a6d84b7399ccbf3dbde0c5d8e882a32ba555a56fa481d447
     keywords:
@@ -21,7 +39,7 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-04-23T20:34:01.160419+10:00"
+    created: "2026-04-23T20:42:32.711232+10:00"
     description: A Helm chart for deploying the Discord Bot application
     digest: 70da25c6f003f613427593b81d619152c1cdc162b9caa8b4b8dc590ffff040de
     keywords:
@@ -37,4 +55,4 @@ entries:
     urls:
     - https://midhunkumar05.github.io/charts/discordbot-0.1.1.tgz
     version: 0.1.1
-generated: "2026-04-23T20:34:01.159984+10:00"
+generated: "2026-04-23T20:42:32.710362+10:00"
