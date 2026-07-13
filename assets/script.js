@@ -6,16 +6,20 @@
   /* ---- tiny critically-damped spring, used for the nav indicator and
      the cursor crosshair — both are continuously re-targeted, so a
      CSS transition would fight new input instead of blending it. ---- */
-  function makeSpring({ stiffness = 210, damping = 26 } = {}) {
-    let value = 0, target = 0, velocity = 0, raf = null;
+  function makeSpring({ stiffness = 340, damping = 34 } = {}) {
+    let value = 0, target = 0, velocity = 0, raf = null, lastT = 0;
     let onUpdate = () => {};
 
-    function step() {
+    function step(now) {
+      // dt in seconds, clamped so a dropped/backgrounded frame can't blow up the integration
+      const dt = lastT ? Math.min((now - lastT) / 1000, 0.05) : 1 / 60;
+      lastT = now;
+
       const force = (target - value) * stiffness;
       const damp = velocity * damping;
       const accel = force - damp;
-      velocity += accel * (1 / 1000);
-      value += velocity * (1 / 1000);
+      velocity += accel * dt;
+      value += velocity * dt;
       onUpdate(value);
 
       if (Math.abs(target - value) > 0.01 || Math.abs(velocity) > 0.01) {
@@ -24,6 +28,7 @@
         value = target;
         onUpdate(value);
         raf = null;
+        lastT = 0;
       }
     }
 
@@ -120,8 +125,8 @@
   if (!reduceMotion && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
     const crosshair = document.getElementById("crosshair");
     if (crosshair) {
-      const xSpring = makeSpring({ stiffness: 260, damping: 24 });
-      const ySpring = makeSpring({ stiffness: 260, damping: 24 });
+      const xSpring = makeSpring({ stiffness: 420, damping: 32 });
+      const ySpring = makeSpring({ stiffness: 420, damping: 32 });
       let cx = 0, cy = 0;
       xSpring.subscribe((v) => { cx = v; paint(); });
       ySpring.subscribe((v) => { cy = v; paint(); });
