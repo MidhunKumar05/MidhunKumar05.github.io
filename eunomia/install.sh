@@ -8,16 +8,19 @@
 #   curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash -s -- --yes
 #
 # Flags:
-#   --dir <path>       install location (default: ./eunomia)
-#   --ref <ref>        git ref to check out: a tag, branch, or "latest" (default: latest release)
-#   --api-key <key>    OpenAI API key, written to .env (optional, can add later in Settings)
-#   --base-url <url>   browser-reachable backend URL baked into the frontend (default: http://localhost:8001)
-#   --yes, -y          skip interactive prompts, accept defaults
-#   --no-color         disable ANSI colors/animation
+#   --dir <path>              install location (default: ./eunomia)
+#   --ref <ref>               git ref to check out: a tag, branch, or "latest" (default: latest release)
+#   --api-key <key>           OpenAI API key, written to .env (optional, can add later in Settings)
+#   --base-url <url>          browser-reachable backend URL baked into the frontend (default: http://localhost:<backend-port>)
+#   --openai-base-url <url>   OpenAI-compatible endpoint, e.g. a self-hosted/alternate provider (default: https://api.openai.com/v1)
+#   --backend-port <port>     host port to publish the backend on (default: 8001)
+#   --frontend-port <port>    host port to publish the frontend on (default: 3000)
+#   --yes, -y                 skip interactive prompts, accept defaults
+#   --no-color                disable ANSI colors/animation
 
 set -euo pipefail
 
-INSTALLER_VERSION="1.1.0"
+INSTALLER_VERSION="1.2.0"
 
 # Never hang on a credential prompt -- fail fast instead (e.g. if the repo
 # isn't public yet, or the network drops mid-clone).
@@ -30,6 +33,9 @@ REF="latest"
 ASSUME_YES=0
 OPENAI_KEY=""
 API_BASE_URL=""
+OPENAI_BASE_URL=""
+BACKEND_PORT="8001"
+FRONTEND_PORT="3000"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -37,6 +43,9 @@ while [ $# -gt 0 ]; do
     --ref) REF="$2"; shift 2 ;;
     --api-key) OPENAI_KEY="$2"; shift 2 ;;
     --base-url) API_BASE_URL="$2"; shift 2 ;;
+    --openai-base-url) OPENAI_BASE_URL="$2"; shift 2 ;;
+    --backend-port) BACKEND_PORT="$2"; shift 2 ;;
+    --frontend-port) FRONTEND_PORT="$2"; shift 2 ;;
     --yes|-y) ASSUME_YES=1; shift ;;
     --no-color) NO_COLOR=1; shift ;;
     *) echo "unknown flag: $1" >&2; exit 1 ;;
@@ -158,17 +167,24 @@ echo
 info "current directory: ${PWD}"
 prompt INSTALL_DIR "Install into which directory?" "$INSTALL_DIR"
 if [ "$ASSUME_YES" -eq 0 ] && [ "$IS_TTY" -eq 1 ]; then
+  prompt BACKEND_PORT "Host port for the backend?" "$BACKEND_PORT"
+  prompt FRONTEND_PORT "Host port for the frontend?" "$FRONTEND_PORT"
   if [ -z "$OPENAI_KEY" ]; then
     prompt WANT_KEY "Set an OpenAI API key now? (enables embeddings/chat — optional, can add later in Settings)" "skip"
     if [ "$WANT_KEY" != "skip" ] && [ -n "$WANT_KEY" ]; then
       OPENAI_KEY="$WANT_KEY"
     fi
   fi
+  if [ -z "$OPENAI_BASE_URL" ]; then
+    prompt OPENAI_BASE_URL "OpenAI-compatible API base URL (self-hosted/alternate provider — optional)" "https://api.openai.com/v1"
+  fi
   if [ -z "$API_BASE_URL" ]; then
-    prompt API_BASE_URL "Backend API base URL (browser-reachable, used by the frontend)" "http://localhost:8001"
+    prompt API_BASE_URL "Backend API base URL (browser-reachable, used by the frontend)" "http://localhost:${BACKEND_PORT}"
   fi
 fi
-API_BASE_URL="${API_BASE_URL:-http://localhost:8001}"
+OPENAI_BASE_URL="${OPENAI_BASE_URL:-https://api.openai.com/v1}"
+API_BASE_URL="${API_BASE_URL:-http://localhost:${BACKEND_PORT}}"
+FRONTEND_URL="http://localhost:${FRONTEND_PORT}"
 echo
 
 if [ -d "$INSTALL_DIR/.git" ]; then
@@ -194,7 +210,12 @@ if [ ! -f .env ]; then
   if [ -n "$OPENAI_KEY" ]; then
     sed -i.bak "s#^OPENAI_API_KEY=.*#OPENAI_API_KEY=${OPENAI_KEY}#" .env
   fi
+  sed -i.bak "s#^OPENAI_BASE_URL=.*#OPENAI_BASE_URL=${OPENAI_BASE_URL}#" .env
   sed -i.bak "s#^NEXT_PUBLIC_API_URL=.*#NEXT_PUBLIC_API_URL=${API_BASE_URL}#" .env
+  sed -i.bak "s#^BACKEND_PORT=.*#BACKEND_PORT=${BACKEND_PORT}#" .env
+  sed -i.bak "s#^FRONTEND_PORT=.*#FRONTEND_PORT=${FRONTEND_PORT}#" .env
+  sed -i.bak "s#^FRONTEND_URL=.*#FRONTEND_URL=${FRONTEND_URL}#" .env
+  sed -i.bak "s#^CORS_ALLOWED_ORIGINS=.*#CORS_ALLOWED_ORIGINS=${FRONTEND_URL}#" .env
   rm -f .env.bak
   ok "generated .env with fresh secrets"
   [ -z "$OPENAI_KEY" ] && info "no OpenAI key set — add one later from Settings to enable embeddings/chat"
@@ -203,7 +224,7 @@ else
 fi
 
 spinner "Pulling prebuilt images" docker compose pull surrealdb backend
-if [ "$API_BASE_URL" = "http://localhost:8001" ]; then
+if [ "$API_BASE_URL" = "http://localhost:${BACKEND_PORT}" ]; then
   spinner "Pulling prebuilt images" docker compose pull frontend
 else
   spinner "Building frontend (custom API URL)" docker compose build frontend
@@ -217,8 +238,8 @@ cat <<'EOF'
   │  Eunomia is up.                              │
 EOF
 printf "%s\n" "$RESET"
-printf "  %s│%s  Frontend  %shttp://localhost:3000%s\n" "$GREEN" "$RESET" "$CYAN" "$RESET"
-printf "  %s│%s  Backend   %shttp://localhost:8001/healthz%s\n" "$GREEN" "$RESET" "$CYAN" "$RESET"
+printf "  %s│%s  Frontend  %s%s%s\n" "$GREEN" "$RESET" "$CYAN" "$FRONTEND_URL" "$RESET"
+printf "  %s│%s  Backend   %shttp://localhost:%s/healthz%s\n" "$GREEN" "$RESET" "$CYAN" "$BACKEND_PORT" "$RESET"
 printf "  %s└─────────────────────────────────────────────┘%s\n" "$GREEN" "$RESET"
 echo
 info "status any time with: (cd ${INSTALL_DIR} && docker compose ps)"
