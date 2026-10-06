@@ -4,7 +4,7 @@
 #
 # Usage:
 #   curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash
-#   curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash -s -- --dir ~/eunomia --ref v1.1.3
+#   curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash -s -- --dir ~/eunomia --ref v1.1.7
 #   curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash -s -- --yes
 #
 # Flags:
