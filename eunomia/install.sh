@@ -8,12 +8,16 @@
 #   curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash -s -- --yes
 #
 # Flags:
-#   --dir <path>   install location (default: ./eunomia)
-#   --ref <ref>    git ref to check out: a tag, branch, or "latest" (default: latest release)
-#   --yes, -y      skip interactive prompts, accept defaults
-#   --no-color     disable ANSI colors/animation
+#   --dir <path>       install location (default: ./eunomia)
+#   --ref <ref>        git ref to check out: a tag, branch, or "latest" (default: latest release)
+#   --api-key <key>    OpenAI API key, written to .env (optional, can add later in Settings)
+#   --base-url <url>   browser-reachable backend URL baked into the frontend (default: http://localhost:8001)
+#   --yes, -y          skip interactive prompts, accept defaults
+#   --no-color         disable ANSI colors/animation
 
 set -euo pipefail
+
+INSTALLER_VERSION="1.1.0"
 
 # Never hang on a credential prompt -- fail fast instead (e.g. if the repo
 # isn't public yet, or the network drops mid-clone).
@@ -25,11 +29,14 @@ INSTALL_DIR="eunomia"
 REF="latest"
 ASSUME_YES=0
 OPENAI_KEY=""
+API_BASE_URL=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --dir) INSTALL_DIR="$2"; shift 2 ;;
     --ref) REF="$2"; shift 2 ;;
+    --api-key) OPENAI_KEY="$2"; shift 2 ;;
+    --base-url) API_BASE_URL="$2"; shift 2 ;;
     --yes|-y) ASSUME_YES=1; shift ;;
     --no-color) NO_COLOR=1; shift ;;
     *) echo "unknown flag: $1" >&2; exit 1 ;;
@@ -44,7 +51,7 @@ done
 IS_TTY=0
 if [ -t 1 ] && [ -r /dev/tty ]; then
   IS_TTY=1
-  exec </dev/tty
+  exec 3</dev/tty
 fi
 
 if [ "${NO_COLOR:-0}" = "1" ] || [ "$IS_TTY" -eq 0 ]; then
@@ -102,7 +109,7 @@ prompt() {
     return
   fi
   printf "  %s?%s %s %s[%s]%s " "$CYAN" "$RESET" "$__q" "$GREY" "$__default" "$RESET"
-  read -r __ans || __ans=""
+  read -r __ans <&3 || __ans=""
   printf -v "$__var" '%s' "${__ans:-$__default}"
 }
 
@@ -120,7 +127,7 @@ banner() {
   ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═╝
 EOF
   printf '%s' "$RESET"
-  printf "  %sa memory you can query%s\n\n" "$GREY" "$RESET"
+  printf "  %sa memory you can query%s %s(installer v%s)%s\n\n" "$GREY" "$RESET" "$GREY" "$INSTALLER_VERSION" "$RESET"
 }
 
 banner
@@ -148,13 +155,20 @@ if [ "$REF" = "latest" ]; then
 fi
 
 echo
+info "current directory: ${PWD}"
 prompt INSTALL_DIR "Install into which directory?" "$INSTALL_DIR"
 if [ "$ASSUME_YES" -eq 0 ] && [ "$IS_TTY" -eq 1 ]; then
-  prompt WANT_KEY "Set an OpenAI API key now? (enables embeddings/chat — optional, can add later in Settings)" "skip"
-  if [ "$WANT_KEY" != "skip" ] && [ -n "$WANT_KEY" ]; then
-    OPENAI_KEY="$WANT_KEY"
+  if [ -z "$OPENAI_KEY" ]; then
+    prompt WANT_KEY "Set an OpenAI API key now? (enables embeddings/chat — optional, can add later in Settings)" "skip"
+    if [ "$WANT_KEY" != "skip" ] && [ -n "$WANT_KEY" ]; then
+      OPENAI_KEY="$WANT_KEY"
+    fi
+  fi
+  if [ -z "$API_BASE_URL" ]; then
+    prompt API_BASE_URL "Backend API base URL (browser-reachable, used by the frontend)" "http://localhost:8001"
   fi
 fi
+API_BASE_URL="${API_BASE_URL:-http://localhost:8001}"
 echo
 
 if [ -d "$INSTALL_DIR/.git" ]; then
@@ -165,6 +179,12 @@ fi
 
 cd "$INSTALL_DIR"
 
+# Pull the prebuilt image matching the checked-out ref. Only release tags
+# (v1.2.3) get an image of that name pushed -- branches fall back to "latest".
+case "$REF" in
+  v[0-9]*) export EUNOMIA_IMAGE_TAG="$REF" ;;
+esac
+
 if [ ! -f .env ]; then
   cp .env.example .env
   JWT_SECRET="$(openssl rand -base64 32)"
@@ -174,6 +194,7 @@ if [ ! -f .env ]; then
   if [ -n "$OPENAI_KEY" ]; then
     sed -i.bak "s#^OPENAI_API_KEY=.*#OPENAI_API_KEY=${OPENAI_KEY}#" .env
   fi
+  sed -i.bak "s#^NEXT_PUBLIC_API_URL=.*#NEXT_PUBLIC_API_URL=${API_BASE_URL}#" .env
   rm -f .env.bak
   ok "generated .env with fresh secrets"
   [ -z "$OPENAI_KEY" ] && info "no OpenAI key set — add one later from Settings to enable embeddings/chat"
@@ -181,7 +202,12 @@ else
   ok "existing .env found, left untouched"
 fi
 
-spinner "Building images (first run takes a few minutes)" docker compose build
+spinner "Pulling prebuilt images" docker compose pull surrealdb backend
+if [ "$API_BASE_URL" = "http://localhost:8001" ]; then
+  spinner "Pulling prebuilt images" docker compose pull frontend
+else
+  spinner "Building frontend (custom API URL)" docker compose build frontend
+fi
 spinner "Starting the stack" docker compose up -d
 
 echo

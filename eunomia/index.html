@@ -25,6 +25,9 @@
       --kind-person: #6f9bc9;
       --kind-organisation: #a692c9;
       --kind-location: #c98a5a;
+      --kind-repo: #5aa6c9;
+      --kind-file: #7fb88a;
+      --kind-symbol: #c9c05a;
       --font-sans: "Inter", system-ui, sans-serif;
       --font-mono: "IBM Plex Mono", ui-monospace, monospace;
       --radius-card: 18px;
@@ -344,6 +347,46 @@
           <span class="graph-legend-item"><span class="graph-legend-dot" style="background: var(--kind-person);"></span>Person</span>
           <span class="graph-legend-item"><span class="graph-legend-dot" style="background: var(--kind-organisation);"></span>Organisation</span>
           <span class="graph-legend-item"><span class="graph-legend-dot" style="background: var(--kind-location);"></span>Location</span>
+        </div>
+      </div>
+
+      <p class="hint" style="margin: 8px 0 4px;">The same graph covers code — repositories, files, and symbols, linked the same way:</p>
+      <div class="graph-wrap">
+        <svg viewBox="0 0 460 215" width="460" height="215" role="img" aria-label="Example code graph: repository Eunomia contains file auth.rs, which defines symbol login(), which calls symbol verify_token().">
+          <line class="graph-edge" x1="72" y1="106" x2="221" y2="59" />
+          <text class="graph-edge-label" x="128" y="76" text-anchor="middle">contains</text>
+
+          <line class="graph-edge" x1="230" y1="70" x2="230" y2="150" />
+          <text class="graph-edge-label" x="282" y="113" text-anchor="middle">defines</text>
+
+          <line class="graph-edge" x1="245" y1="165" x2="373" y2="165" />
+          <text class="graph-edge-label" x="309" y="150" text-anchor="middle">calls</text>
+
+          <g class="graph-node">
+            <circle cx="70" cy="110" r="15" style="fill: var(--kind-repo);" />
+            <text class="graph-label" x="70" y="140" text-anchor="middle">Eunomia</text>
+            <text class="graph-kind" x="70" y="153" text-anchor="middle" style="fill: var(--kind-repo);">REPOSITORY</text>
+          </g>
+          <g class="graph-node">
+            <circle cx="230" cy="55" r="15" style="fill: var(--kind-file);" />
+            <text class="graph-label" x="230" y="34" text-anchor="middle">auth.rs</text>
+            <text class="graph-kind" x="230" y="21" text-anchor="middle" style="fill: var(--kind-file);">FILE</text>
+          </g>
+          <g class="graph-node">
+            <circle cx="230" cy="165" r="15" style="fill: var(--kind-symbol);" />
+            <text class="graph-label" x="230" y="195" text-anchor="middle">login()</text>
+            <text class="graph-kind" x="230" y="208" text-anchor="middle" style="fill: var(--kind-symbol);">SYMBOL</text>
+          </g>
+          <g class="graph-node">
+            <circle cx="390" cy="165" r="15" style="fill: var(--kind-symbol);" />
+            <text class="graph-label" x="390" y="195" text-anchor="middle">verify_token()</text>
+            <text class="graph-kind" x="390" y="208" text-anchor="middle" style="fill: var(--kind-symbol);">SYMBOL</text>
+          </g>
+        </svg>
+        <div class="graph-legend">
+          <span class="graph-legend-item"><span class="graph-legend-dot" style="background: var(--kind-repo);"></span>Repository</span>
+          <span class="graph-legend-item"><span class="graph-legend-dot" style="background: var(--kind-file);"></span>File</span>
+          <span class="graph-legend-item"><span class="graph-legend-dot" style="background: var(--kind-symbol);"></span>Symbol</span>
         </div>
       </div>
     </section>
