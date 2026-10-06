@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eunomia — Midhun Kumar</title>
+  <meta name="description" content="Eunomia — a personal memory and knowledge assistant: vaults, an entity/memory graph, connectors, and a tool-calling chat agent. Rust (Axum) + SurrealDB backend, Next.js frontend.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/assets/style.css">
+  <style>
+    .codeblock {
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.6;
+      background: var(--paper-raised);
+      border: 1px solid var(--line);
+      padding: 14px 18px;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 0 0 10px;
+    }
+    .install-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .copy-btn {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      letter-spacing: 0.03em;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink-soft);
+      padding: 7px 12px;
+      cursor: pointer;
+      transition: border-color 0.12s ease, color 0.12s ease;
+    }
+    .copy-btn:hover { border-color: var(--ink); color: var(--ink); }
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 18px;
+      margin: 18px 0 4px;
+    }
+    .stack-item { border-left: 2px solid var(--line); padding-left: 12px; }
+    .stack-item h4 { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 4px; }
+    .stack-item p { font-size: 13.5px; margin: 0; color: var(--ink-soft); }
+  </style>
+</head>
+<body>
+
+  <div class="reg-mark tl"></div>
+  <div class="reg-mark tr"></div>
+  <div class="reg-mark bl"></div>
+  <div class="reg-mark br"></div>
+  <div id="crosshair"></div>
+
+  <nav class="nav">
+    <a class="nav-mark" href="/"><b>MIDHUN KUMAR</b> <span>/ PORTFOLIO</span></a>
+    <ul class="nav-links">
+      <li><a href="/#about">About</a></li>
+      <li><a href="/#experience">Experience</a></li>
+      <li><a href="/#projects">Projects</a></li>
+      <li><a href="/#writing">Writing</a></li>
+      <li><a href="/#downloads">Downloads</a></li>
+      <li><a href="/#contact">Contact</a></li>
+    </ul>
+    <span class="nav-rev">REV 2026.07</span>
+  </nav>
+
+  <main>
+    <div class="sheet">
+      <a class="back-link" href="/#projects">← Back to projects</a>
+      <header class="article-head">
+        <h1>Eunomia</h1>
+        <p class="article-meta">Rust · Axum · SurrealDB · Next.js · TypeScript · Self-hosted</p>
+      </header>
+
+      <article class="article-body">
+        <p>Eunomia is a personal memory and knowledge assistant — a place to accumulate facts, people, organisations, and context over time, and have an agent reason over it rather than starting from zero in every conversation.</p>
+
+        <h2>What it does</h2>
+        <p>At its core is an entity/memory graph: people, organisations, locations, and (for working in codebases) repositories, files, and symbols — each with notes attached and relations drawn between them. A vault system scopes that graph per-user or per-team, so a personal knowledge base and a shared one coexist without stepping on each other.</p>
+        <p>A chat agent sits on top with tool-calling access to that graph plus a recall/search layer over ingested records, so it can look things up, write new memories, and cite its sources rather than hallucinate them. Connectors (Up Bank, PocketAI, and a generic open connector) pull external data in on a schedule, and every mutating action is written to an audit log.</p>
+
+        <div class="stack-grid">
+          <div class="stack-item">
+            <h4>Backend</h4>
+            <p>Rust, Axum, the official SurrealDB SDK — auth, vaults, entities, connectors, chat streaming (SSE), all on one schema.</p>
+          </div>
+          <div class="stack-item">
+            <h4>Database</h4>
+            <p>SurrealDB — graph relations, full-text search, and vector search (MTREE) in one engine.</p>
+          </div>
+          <div class="stack-item">
+            <h4>Frontend</h4>
+            <p>Next.js, TypeScript — dashboard, entity graph, chat, vaults, connectors, settings.</p>
+          </div>
+          <div class="stack-item">
+            <h4>Deployment</h4>
+            <p>Docker Compose — SurrealDB, backend, and frontend, one command to bring up.</p>
+          </div>
+        </div>
+
+        <h2>Install</h2>
+        <p>Requires <a href="https://git-scm.com/" target="_blank" rel="noopener">git</a> and <a href="https://docs.docker.com/get-docker/" target="_blank" rel="noopener">Docker</a> (with the Compose plugin). Clones the latest release, generates fresh secrets into a <code>.env</code>, and starts the stack.</p>
+        <pre class="codeblock" id="install-cmd">curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash</pre>
+        <div class="install-row">
+          <button class="copy-btn" id="copy-install" type="button">Copy command</button>
+          <span style="font-size:12px; color: var(--ink-faint);">Installs into <code>./eunomia</code> · frontend on :3000 · backend on :8001</span>
+        </div>
+
+        <h2>Checking for updates</h2>
+        <p>Any client — the app's own self-update check, a script, whatever — can poll GitHub's releases API to see what the current version is:</p>
+        <pre class="codeblock">GET https://api.github.com/repos/Qyrhal/Eunomia/releases/latest</pre>
+        <p>The <code>tag_name</code> field (e.g. <code>v1.1.3</code>) is the current release.</p>
+
+        <h2>Source</h2>
+        <p>Code is on GitHub: <a href="https://github.com/Qyrhal/Eunomia" target="_blank" rel="noopener">github.com/Qyrhal/Eunomia</a>.</p>
+      </article>
+    </div>
+  </main>
+
+  <footer class="colophon">
+    <span>© 2026 Midhun Kumar</span>
+    <span>Built by hand — no framework, no build step</span>
+    <span>Rev 2026.07</span>
+  </footer>
+
+  <script src="/assets/script.js"></script>
+  <script>
+    (function () {
+      var btn = document.getElementById("copy-install");
+      var cmd = document.getElementById("install-cmd");
+      if (!btn || !cmd) return;
+      btn.addEventListener("click", function () {
+        navigator.clipboard.writeText(cmd.textContent.trim()).then(function () {
+          var original = btn.textContent;
+          btn.textContent = "Copied";
+          setTimeout(function () { btn.textContent = original; }, 1500);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
