@@ -19,7 +19,7 @@
 
 set -euo pipefail
 
-INSTALLER_VERSION="1.4.0"
+INSTALLER_VERSION="1.4.1"
 
 # Never hang on a credential prompt -- fail fast instead (e.g. if the repo
 # isn't public yet, or the network drops mid-clone).
@@ -242,6 +242,7 @@ fi
 
 spinner "Pulling prebuilt images" docker compose pull
 spinner "Starting the stack" docker compose up -d
+spinner "Waiting for the frontend" bash -c "for i in \$(seq 1 60); do curl -sf -o /dev/null http://localhost:${FRONTEND_PORT}/login && exit 0; sleep 1; done; exit 1"
 
 echo
 printf "  %s%sEunomia is up.%s\n\n" "$GREEN" "$BOLD" "$RESET"
