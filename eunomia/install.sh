@@ -20,7 +20,7 @@
 
 set -euo pipefail
 
-INSTALLER_VERSION="1.2.0"
+INSTALLER_VERSION="1.3.0"
 
 # Never hang on a credential prompt -- fail fast instead (e.g. if the repo
 # isn't public yet, or the network drops mid-clone).
@@ -153,6 +153,26 @@ if ! docker compose version >/dev/null 2>&1; then
 fi
 ok "docker compose plugin found"
 
+# Best-effort LAN IP, so the default install works when the frontend is
+# opened from another device on the network (phone, another machine) instead
+# of only from the host itself -- "localhost" there means that other device.
+detect_lan_ip() {
+  if command -v ipconfig >/dev/null 2>&1; then
+    for iface in en0 en1; do
+      ipconfig getifaddr "$iface" 2>/dev/null && return 0
+    done
+  fi
+  if command -v ip >/dev/null 2>&1; then
+    ip -4 route get 1.1.1.1 2>/dev/null | sed -n 's/.* src \([0-9.]*\).*/\1/p' | head -1
+    return 0
+  fi
+  if command -v hostname >/dev/null 2>&1; then
+    hostname -I 2>/dev/null | awk '{print $1}'
+  fi
+}
+LAN_IP="$(detect_lan_ip || true)"
+HOST_ADDR="${LAN_IP:-localhost}"
+
 if [ "$REF" = "latest" ]; then
   REF="$(curl -fsSL --max-time 8 "$API_LATEST" 2>/dev/null | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name":[[:space:]]*"([^"]+)".*/\1/' || true)"
   if [ -z "$REF" ]; then
@@ -165,6 +185,7 @@ fi
 
 echo
 info "current directory: ${PWD}"
+info "LAN address: ${HOST_ADDR} (used as the default below so other devices on your network can reach it)"
 prompt INSTALL_DIR "Install into which directory?" "$INSTALL_DIR"
 if [ "$ASSUME_YES" -eq 0 ] && [ "$IS_TTY" -eq 1 ]; then
   prompt BACKEND_PORT "Host port for the backend?" "$BACKEND_PORT"
@@ -179,12 +200,12 @@ if [ "$ASSUME_YES" -eq 0 ] && [ "$IS_TTY" -eq 1 ]; then
     prompt OPENAI_BASE_URL "OpenAI-compatible API base URL (self-hosted/alternate provider — optional)" "https://api.openai.com/v1"
   fi
   if [ -z "$API_BASE_URL" ]; then
-    prompt API_BASE_URL "Backend API base URL (browser-reachable, used by the frontend)" "http://localhost:${BACKEND_PORT}"
+    prompt API_BASE_URL "Backend API base URL (browser-reachable, used by the frontend)" "http://${HOST_ADDR}:${BACKEND_PORT}"
   fi
 fi
 OPENAI_BASE_URL="${OPENAI_BASE_URL:-https://api.openai.com/v1}"
-API_BASE_URL="${API_BASE_URL:-http://localhost:${BACKEND_PORT}}"
-FRONTEND_URL="http://localhost:${FRONTEND_PORT}"
+API_BASE_URL="${API_BASE_URL:-http://${HOST_ADDR}:${BACKEND_PORT}}"
+FRONTEND_URL="http://${HOST_ADDR}:${FRONTEND_PORT}"
 echo
 
 if [ -d "$INSTALL_DIR/.git" ]; then
@@ -224,7 +245,7 @@ else
 fi
 
 spinner "Pulling prebuilt images" docker compose pull surrealdb backend
-if [ "$API_BASE_URL" = "http://localhost:${BACKEND_PORT}" ]; then
+if [ "$API_BASE_URL" = "http://${HOST_ADDR}:${BACKEND_PORT}" ]; then
   spinner "Pulling prebuilt images" docker compose pull frontend
 else
   spinner "Building frontend (custom API URL)" docker compose build frontend
