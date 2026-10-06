@@ -22,6 +22,9 @@
       --border-strong: rgba(242, 244, 246, 0.16);
       --felt: #3fa873;
       --warning: #c9a35c;
+      --kind-person: #6f9bc9;
+      --kind-organisation: #a692c9;
+      --kind-location: #c98a5a;
       --font-sans: "Inter", system-ui, sans-serif;
       --font-mono: "IBM Plex Mono", ui-monospace, monospace;
       --radius-card: 18px;
@@ -184,6 +187,71 @@
     .btn-ghost:hover { border-color: var(--border-strong); }
     .hint { font-size: 12px; color: var(--ink-faint); }
 
+    .inspired-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+    .inspired-label { font-size: 12px; color: var(--ink-faint); }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-raised);
+      color: var(--ink-dim);
+      font-size: 12px;
+      text-decoration: none !important;
+      transition: border-color 0.12s ease, color 0.12s ease;
+    }
+    .badge:hover { border-color: var(--border-strong); color: var(--ink); }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    .graph-wrap {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-field);
+      padding: 18px 10px 10px;
+      margin: 4px 0 16px;
+      overflow-x: auto;
+    }
+    .graph-wrap svg { display: block; margin: 0 auto; min-width: 460px; }
+    .graph-edge { stroke: var(--border-strong); stroke-width: 1.4; }
+    .graph-edge-label {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      fill: var(--ink-faint);
+    }
+    .graph-node circle {
+      stroke: var(--surface-raised);
+      stroke-width: 3;
+      animation: graph-pulse 3.2s ease-in-out infinite;
+    }
+    .graph-node:nth-of-type(2) circle { animation-delay: -0.6s; }
+    .graph-node:nth-of-type(3) circle { animation-delay: -1.2s; }
+    .graph-node:nth-of-type(4) circle { animation-delay: -1.8s; }
+    .graph-node:nth-of-type(5) circle { animation-delay: -2.4s; }
+    .graph-label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      fill: var(--ink);
+    }
+    .graph-kind {
+      font-family: var(--font-mono);
+      font-size: 8.5px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    @keyframes graph-pulse {
+      0%, 100% { r: 15; filter: brightness(1); }
+      50% { r: 16.5; filter: brightness(1.18); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .graph-node circle { animation: none; }
+    }
+    .graph-legend { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; padding: 10px 0 2px; }
+    .graph-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-faint); }
+    .graph-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
     footer {
       max-width: 760px;
       margin: 40px auto 0;
@@ -211,6 +279,17 @@
       <p class="eyebrow">Self-hosted · Enterprise scale</p>
       <h1>Eunomia</h1>
       <p class="lede">A Super Intelligence Agent AI memory system, built for enterprise scale in Rust — vaults, an entity/memory graph, connectors, and a tool-calling chat agent that reasons over what it's accumulated instead of starting from zero.</p>
+      <div class="inspired-row">
+        <span class="inspired-label">Inspired by</span>
+        <a class="badge" href="https://vectorize.io/" target="_blank" rel="noopener">
+          <span class="badge-dot" style="background: var(--kind-organisation);"></span>
+          Hindsight (vectorize.io)
+        </a>
+        <a class="badge" href="https://surrealdb.com/" target="_blank" rel="noopener">
+          <span class="badge-dot" style="background: var(--felt);"></span>
+          SurrealDB
+        </a>
+      </div>
     </div>
 
     <section class="ledger">
@@ -227,6 +306,46 @@
       <h2>What it does</h2>
       <p>Eunomia is a Super Intelligence Agent AI memory system, built for enterprise scale in Rust. At its core is an entity/memory graph: people, organisations, locations, and (for working in codebases) repositories, files, and symbols — each with notes attached and relations drawn between them. A vault system scopes that graph per-user or per-team, so a personal knowledge base and a shared one coexist without stepping on each other.</p>
       <p>A chat agent sits on top with tool-calling access to that graph plus a recall/search layer over ingested records, so it can look things up, write new memories, and cite its sources rather than hallucinate them. Connectors (Up Bank, PocketAI, and a generic open connector) pull external data in on a schedule, and every mutating action is written to an audit log.</p>
+
+      <p class="hint" style="margin: 8px 0 4px;">A memory graph, in practice — entities synced from your data, linked by typed relations:</p>
+      <div class="graph-wrap">
+        <svg viewBox="0 0 460 215" width="460" height="215" role="img" aria-label="Example entity graph: Ada Lovelace influenced Alan Turing, who worked at Bletchley Park, located in London.">
+          <line class="graph-edge" x1="72" y1="106" x2="221" y2="59" />
+          <text class="graph-edge-label" x="128" y="76" text-anchor="middle">influenced</text>
+
+          <line class="graph-edge" x1="230" y1="70" x2="230" y2="150" />
+          <text class="graph-edge-label" x="282" y="113" text-anchor="middle">worked_at</text>
+
+          <line class="graph-edge" x1="245" y1="165" x2="373" y2="165" />
+          <text class="graph-edge-label" x="309" y="150" text-anchor="middle">located_in</text>
+
+          <g class="graph-node">
+            <circle cx="70" cy="110" r="15" style="fill: var(--kind-person);" />
+            <text class="graph-label" x="70" y="140" text-anchor="middle">Ada Lovelace</text>
+            <text class="graph-kind" x="70" y="153" text-anchor="middle" style="fill: var(--kind-person);">PERSON</text>
+          </g>
+          <g class="graph-node">
+            <circle cx="230" cy="55" r="15" style="fill: var(--kind-person);" />
+            <text class="graph-label" x="230" y="34" text-anchor="middle">Alan Turing</text>
+            <text class="graph-kind" x="230" y="21" text-anchor="middle" style="fill: var(--kind-person);">PERSON</text>
+          </g>
+          <g class="graph-node">
+            <circle cx="230" cy="165" r="15" style="fill: var(--kind-organisation);" />
+            <text class="graph-label" x="230" y="195" text-anchor="middle">Bletchley Park</text>
+            <text class="graph-kind" x="230" y="208" text-anchor="middle" style="fill: var(--kind-organisation);">ORGANISATION</text>
+          </g>
+          <g class="graph-node">
+            <circle cx="390" cy="165" r="15" style="fill: var(--kind-location);" />
+            <text class="graph-label" x="390" y="195" text-anchor="middle">London</text>
+            <text class="graph-kind" x="390" y="208" text-anchor="middle" style="fill: var(--kind-location);">LOCATION</text>
+          </g>
+        </svg>
+        <div class="graph-legend">
+          <span class="graph-legend-item"><span class="graph-legend-dot" style="background: var(--kind-person);"></span>Person</span>
+          <span class="graph-legend-item"><span class="graph-legend-dot" style="background: var(--kind-organisation);"></span>Organisation</span>
+          <span class="graph-legend-item"><span class="graph-legend-dot" style="background: var(--kind-location);"></span>Location</span>
+        </div>
+      </div>
     </section>
 
     <section class="ledger">
