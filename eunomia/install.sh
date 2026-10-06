@@ -11,7 +11,6 @@
 #   --dir <path>              install location (default: ./eunomia)
 #   --ref <ref>               git ref to check out: a tag, branch, or "latest" (default: latest release)
 #   --api-key <key>           OpenAI API key, written to .env (optional, can add later in Settings)
-#   --base-url <url>          browser-reachable backend URL baked into the frontend (default: http://localhost:<backend-port>)
 #   --openai-base-url <url>   OpenAI-compatible endpoint, e.g. a self-hosted/alternate provider (default: https://api.openai.com/v1)
 #   --backend-port <port>     host port to publish the backend on (default: 8001)
 #   --frontend-port <port>    host port to publish the frontend on (default: 3000)
@@ -20,7 +19,7 @@
 
 set -euo pipefail
 
-INSTALLER_VERSION="1.3.0"
+INSTALLER_VERSION="1.4.0"
 
 # Never hang on a credential prompt -- fail fast instead (e.g. if the repo
 # isn't public yet, or the network drops mid-clone).
@@ -32,7 +31,6 @@ INSTALL_DIR="eunomia"
 REF="latest"
 ASSUME_YES=0
 OPENAI_KEY=""
-API_BASE_URL=""
 OPENAI_BASE_URL=""
 BACKEND_PORT="8001"
 FRONTEND_PORT="3000"
@@ -42,7 +40,6 @@ while [ $# -gt 0 ]; do
     --dir) INSTALL_DIR="$2"; shift 2 ;;
     --ref) REF="$2"; shift 2 ;;
     --api-key) OPENAI_KEY="$2"; shift 2 ;;
-    --base-url) API_BASE_URL="$2"; shift 2 ;;
     --openai-base-url) OPENAI_BASE_URL="$2"; shift 2 ;;
     --backend-port) BACKEND_PORT="$2"; shift 2 ;;
     --frontend-port) FRONTEND_PORT="$2"; shift 2 ;;
@@ -153,9 +150,8 @@ if ! docker compose version >/dev/null 2>&1; then
 fi
 ok "docker compose plugin found"
 
-# Best-effort LAN IP, so the default install works when the frontend is
-# opened from another device on the network (phone, another machine) instead
-# of only from the host itself -- "localhost" there means that other device.
+# Best-effort LAN IP, only to print the address other devices on the
+# network (phone, another machine) can open.
 detect_lan_ip() {
   if command -v ipconfig >/dev/null 2>&1; then
     for iface in en0 en1; do
@@ -171,7 +167,6 @@ detect_lan_ip() {
   fi
 }
 LAN_IP="$(detect_lan_ip || true)"
-HOST_ADDR="${LAN_IP:-localhost}"
 
 if [ "$REF" = "latest" ]; then
   REF="$(curl -fsSL --max-time 8 "$API_LATEST" 2>/dev/null | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name":[[:space:]]*"([^"]+)".*/\1/' || true)"
@@ -185,7 +180,6 @@ fi
 
 echo
 info "current directory: ${PWD}"
-info "LAN address: ${HOST_ADDR} (used as the default below so other devices on your network can reach it)"
 prompt INSTALL_DIR "Install into which directory?" "$INSTALL_DIR"
 if [ "$ASSUME_YES" -eq 0 ] && [ "$IS_TTY" -eq 1 ]; then
   prompt BACKEND_PORT "Host port for the backend?" "$BACKEND_PORT"
@@ -199,14 +193,18 @@ if [ "$ASSUME_YES" -eq 0 ] && [ "$IS_TTY" -eq 1 ]; then
   if [ -z "$OPENAI_BASE_URL" ]; then
     prompt OPENAI_BASE_URL "OpenAI-compatible API base URL (self-hosted/alternate provider — optional)" "https://api.openai.com/v1"
   fi
-  if [ -z "$API_BASE_URL" ]; then
-    prompt API_BASE_URL "Backend API base URL (browser-reachable, used by the frontend)" "http://${HOST_ADDR}:${BACKEND_PORT}"
-  fi
 fi
 OPENAI_BASE_URL="${OPENAI_BASE_URL:-https://api.openai.com/v1}"
-API_BASE_URL="${API_BASE_URL:-http://${HOST_ADDR}:${BACKEND_PORT}}"
-FRONTEND_URL="http://${HOST_ADDR}:${FRONTEND_PORT}"
 echo
+
+port_in_use() { (exec 3<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null; }
+# Only on a fresh install -- re-running over an existing one finds its own
+# containers already on these ports.
+if [ ! -d "$INSTALL_DIR/.git" ]; then
+  for p in "$FRONTEND_PORT" "$BACKEND_PORT"; do
+    port_in_use "$p" && fail "port $p is already in use -- stop whatever is on it, or pick another with --frontend-port/--backend-port"
+  done
+fi
 
 if [ -d "$INSTALL_DIR/.git" ]; then
   spinner "Updating existing checkout" bash -c "git -C '$INSTALL_DIR' fetch --depth 1 origin '$REF' && git -C '$INSTALL_DIR' checkout '$REF'"
@@ -228,15 +226,13 @@ if [ ! -f .env ]; then
   ENCRYPTION_KEY="$(openssl rand -base64 32)"
   sed -i.bak "s#^JWT_SECRET=.*#JWT_SECRET=${JWT_SECRET}#" .env
   sed -i.bak "s#^ENCRYPTION_KEY=.*#ENCRYPTION_KEY=${ENCRYPTION_KEY}#" .env
+  sed -i.bak "s#^SURREAL_PASS=.*#SURREAL_PASS=$(openssl rand -hex 24)#" .env
   if [ -n "$OPENAI_KEY" ]; then
     sed -i.bak "s#^OPENAI_API_KEY=.*#OPENAI_API_KEY=${OPENAI_KEY}#" .env
   fi
   sed -i.bak "s#^OPENAI_BASE_URL=.*#OPENAI_BASE_URL=${OPENAI_BASE_URL}#" .env
-  sed -i.bak "s#^NEXT_PUBLIC_API_URL=.*#NEXT_PUBLIC_API_URL=${API_BASE_URL}#" .env
   sed -i.bak "s#^BACKEND_PORT=.*#BACKEND_PORT=${BACKEND_PORT}#" .env
   sed -i.bak "s#^FRONTEND_PORT=.*#FRONTEND_PORT=${FRONTEND_PORT}#" .env
-  sed -i.bak "s#^FRONTEND_URL=.*#FRONTEND_URL=${FRONTEND_URL}#" .env
-  sed -i.bak "s#^CORS_ALLOWED_ORIGINS=.*#CORS_ALLOWED_ORIGINS=${FRONTEND_URL}#" .env
   rm -f .env.bak
   ok "generated .env with fresh secrets"
   [ -z "$OPENAI_KEY" ] && info "no OpenAI key set — add one later from Settings to enable embeddings/chat"
@@ -244,24 +240,14 @@ else
   ok "existing .env found, left untouched"
 fi
 
-spinner "Pulling prebuilt images" docker compose pull surrealdb backend
-if [ "$API_BASE_URL" = "http://${HOST_ADDR}:${BACKEND_PORT}" ]; then
-  spinner "Pulling prebuilt images" docker compose pull frontend
-else
-  spinner "Building frontend (custom API URL)" docker compose build frontend
-fi
+spinner "Pulling prebuilt images" docker compose pull
 spinner "Starting the stack" docker compose up -d
 
 echo
-printf "  %s%s" "$GREEN$BOLD"
-cat <<'EOF'
-  ┌─────────────────────────────────────────────┐
-  │  Eunomia is up.                              │
-EOF
-printf "%s\n" "$RESET"
-printf "  %s│%s  Frontend  %s%s%s\n" "$GREEN" "$RESET" "$CYAN" "$FRONTEND_URL" "$RESET"
-printf "  %s│%s  Backend   %shttp://localhost:%s/healthz%s\n" "$GREEN" "$RESET" "$CYAN" "$BACKEND_PORT" "$RESET"
-printf "  %s└─────────────────────────────────────────────┘%s\n" "$GREEN" "$RESET"
+printf "  %s%sEunomia is up.%s\n\n" "$GREEN" "$BOLD" "$RESET"
+printf "  This machine     %shttp://localhost:%s%s\n" "$CYAN" "$FRONTEND_PORT" "$RESET"
+[ -n "$LAN_IP" ] && printf "  Other devices    %shttp://%s:%s%s\n" "$CYAN" "$LAN_IP" "$FRONTEND_PORT" "$RESET"
+printf "  Backend health   %shttp://localhost:%s/healthz%s\n" "$CYAN" "$BACKEND_PORT" "$RESET"
 echo
 info "status any time with: (cd ${INSTALL_DIR} && docker compose ps)"
 echo
