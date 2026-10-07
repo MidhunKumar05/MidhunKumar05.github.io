@@ -494,7 +494,7 @@ else
 fi
 echo
 if [ "$CONNECTED" -eq 1 ]; then
-  info "restart your AI agent(s) — or run /mcp — to load Eunomia's tools"
+  info "restart your AI agent(s) to load Eunomia's tools (Claude Code: exit, then claude --continue)"
 fi
 if [ -z "$OPENAI_KEY" ]; then
   info "no model key set: your agents do the thinking. To save their tokens, add one in Settings → OpenAI"
