@@ -268,6 +268,25 @@
       color: var(--ink-faint);
     }
     footer a { text-decoration: underline; text-underline-offset: 3px; }
+
+    .tabs { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-raised); margin: 0 0 14px; }
+    .tab { font: 500 13px var(--font-sans); border: 0; border-radius: 9px; padding: 7px 14px; background: transparent; color: var(--ink-dim); cursor: pointer; }
+    .tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--border-strong); }
+    .tab:focus-visible, .btn-primary:focus-visible, .opt input:focus-visible, .opt select:focus-visible { outline: 2px solid var(--felt); outline-offset: 2px; }
+    .options { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 4px 0 14px; }
+    .opt { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--ink-faint); }
+    .opt input, .opt select { font: 13px var(--font-mono); background: var(--surface-raised); color: var(--ink); border: 1px solid var(--border); border-radius: var(--radius-field); padding: 8px 10px; }
+    .opt-check { flex-direction: row; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-dim); }
+    details.more summary { cursor: pointer; font-size: 13px; color: var(--ink-dim); margin: 0 0 12px; }
+    .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+    .steps li { counter-increment: s; position: relative; padding: 12px 14px 12px 46px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-field); font-size: 13.5px; color: var(--ink-dim); }
+    .steps li::before { content: counter(s); position: absolute; left: 14px; top: 11px; width: 22px; height: 22px; border-radius: 50%; background: var(--felt); color: var(--canvas); font: 600 12px/22px var(--font-sans); text-align: center; }
+    .steps b { color: var(--ink); font-weight: 600; }
+    .doc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+    .doc-card { display: block; text-decoration: none !important; background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-field); padding: 14px 16px; transition: border-color .12s ease; }
+    .doc-card:hover { border-color: var(--felt); }
+    .doc-card strong { display: block; font-size: 14px; color: var(--ink); margin-bottom: 4px; }
+    .doc-card span { font-size: 12.5px; color: var(--ink-dim); }
   </style>
 </head>
 <body>
@@ -295,13 +314,75 @@
       </div>
     </div>
 
-    <section class="ledger">
+    <section class="ledger" id="install">
       <h2>Install</h2>
-      <p>Requires <a href="https://git-scm.com/" target="_blank" rel="noopener">git</a> and <a href="https://docs.docker.com/get-docker/" target="_blank" rel="noopener">Docker</a> (with the Compose plugin). Clones the latest release, generates fresh secrets into a <code>.env</code>, and starts the stack.</p>
-      <pre class="codeblock" id="install-cmd">curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash</pre>
-      <div class="install-row">
-        <button class="btn-primary" id="copy-install" type="button">Copy command</button>
-        <span class="hint">Installs into <code>./eunomia</code> · frontend on :3000 · backend on :8001</span>
+      <p>Works on macOS and Linux (Windows: inside WSL). Anything missing, Docker included, gets installed for you. Takes a few minutes.</p>
+      <div class="tabs" role="tablist" aria-label="Who is installing">
+        <button class="tab" role="tab" id="tab-you" aria-selected="true" aria-controls="panel-you">I'm installing it</button>
+        <button class="tab" role="tab" id="tab-agent" aria-selected="false" aria-controls="panel-agent">My AI agent is</button>
+      </div>
+
+      <div id="panel-you" role="tabpanel" aria-labelledby="tab-you">
+        <pre class="codeblock" id="install-cmd" style="white-space:pre-wrap;word-break:break-all">curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash</pre>
+        <div class="install-row">
+          <button class="btn-primary" data-copy="install-cmd" type="button">Copy command</button>
+          <span class="hint">Paste into a terminal. It asks a few questions, and Enter accepts each default.</span>
+        </div>
+        <details class="more" style="margin-top:16px">
+          <summary>Customise the command</summary>
+          <div class="options">
+            <label class="opt">Folder<input id="o-dir" value="eunomia" spellcheck="false"></label>
+            <label class="opt">Web app port<input id="o-fport" value="3000" inputmode="numeric"></label>
+            <label class="opt">API / MCP port<input id="o-bport" value="8001" inputmode="numeric"></label>
+            <label class="opt">Connect AI agents
+              <select id="o-agents">
+                <option value="all">All supported</option>
+                <option value="none">None</option>
+                <option value="claude">Claude Code only</option>
+                <option value="codex">Codex only</option>
+                <option value="hermes">Hermes only</option>
+                <option value="vscode">VS Code only</option>
+                <option value="claude-desktop">Claude Desktop only</option>
+              </select>
+            </label>
+          </div>
+          <div class="options">
+                        <label class="opt opt-check"><input type="checkbox" id="o-yes"> No questions (use these values)</label>
+          </div>
+        </details>
+      </div>
+
+      <div id="panel-agent" role="tabpanel" aria-labelledby="tab-agent" hidden>
+        <p>Paste this to Claude Code, Codex, Hermes, or any agent with a shell. It installs Eunomia, creates the account and an API token, and adds the MCP server to itself.</p>
+        <pre class="codeblock" id="agent-prompt" style="white-space:pre-wrap">Install Eunomia on this machine and connect yourself to it over MCP:
+curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash -s -- --yes
+Then reload your MCP servers, call the eunomia `docs` tool to learn the tools, and tell me the sign-in it printed.</pre>
+        <div class="install-row">
+          <button class="btn-primary" data-copy="agent-prompt" type="button">Copy prompt</button>
+          <span class="hint">No OpenAI key needed. Your agent is the model.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="ledger">
+      <h2>What the installer does</h2>
+      <ol class="steps">
+        <li><b>Checks your machine</b> and installs anything missing: git, Docker (Colima on macOS, so no GUI), and jq. It starts Docker if it isn't running.</li>
+        <li><b>Asks a few questions</b>: folder, ports, an optional model endpoint (base URL first, then key), updates, and your account. Then it shows a summary before changing anything.</li>
+        <li><b>Installs</b>: clones the latest release, generates secrets into <code>.env</code>, and starts SurrealDB, the API and the web app.</li>
+        <li><b>Connects</b>: turns on one-click updates (Settings → Updates) and adds Eunomia's MCP server to Claude Code, Codex, Hermes, Gemini CLI, Cursor, Windsurf, OpenCode, VS Code and Claude Desktop, each with its own token. It also installs the memory skill, and for Claude Code adds automatic recall on every prompt.</li>
+      </ol>
+      <p class="hint" style="margin-top:12px">A model key (OpenAI or any compatible endpoint) is optional. It's recommended to save your agent's tokens: Eunomia then does embeddings and answer synthesis itself.</p>
+    </section>
+
+    <section class="ledger" id="docs">
+      <h2>Docs</h2>
+      <div class="doc-grid">
+        <a class="doc-card" href="docs.html?d=quickstart"><strong>Quickstart</strong><span>Install, sign in, and connect an agent in five minutes.</span></a>
+        <a class="doc-card" href="docs.html?d=installation"><strong>Installation</strong><span>Every flag, manual install, and installing as an agent.</span></a>
+        <a class="doc-card" href="docs.html?d=agents"><strong>AI agents &amp; MCP</strong><span>Connecting agents, every tool, and running with no key.</span></a>
+        <a class="doc-card" href="docs.html?d=concepts"><strong>Concepts</strong><span>Vaults, memories, recall, merging, the 3D graph and the vector cloud.</span></a>
+        <a class="doc-card" href="docs.html?d=deployment"><strong>Deployment</strong><span>TLS, production settings, updates and backups.</span></a>
       </div>
     </section>
 
@@ -414,10 +495,9 @@
     </section>
 
     <section class="ledger">
-      <h2>Checking for updates</h2>
-      <p>Any client — the app's own self-update check, a script, whatever — can poll GitHub's releases API to see what the current version is:</p>
+      <h2>Updates</h2>
+      <p>Every install can update itself: <b>Settings → Updates</b> shows when a new release is out, and <b>Update now</b> applies it within a minute (prebuilt images, no rebuild). Scripts can check the latest release too:</p>
       <pre class="codeblock">GET https://api.github.com/repos/Qyrhal/Eunomia/releases/latest</pre>
-      <p>The <code>tag_name</code> field (e.g. <code>v1.1.7</code>) is the current release.</p>
     </section>
 
     <section class="ledger">
@@ -434,17 +514,54 @@
 
   <script>
     (function () {
-      var btn = document.getElementById("copy-install");
-      var cmd = document.getElementById("install-cmd");
-      if (btn && cmd) {
+      // copy buttons
+      document.querySelectorAll("[data-copy]").forEach(function (btn) {
         btn.addEventListener("click", function () {
-          navigator.clipboard.writeText(cmd.textContent.trim()).then(function () {
+          var text = document.getElementById(btn.getAttribute("data-copy")).textContent.trim();
+          navigator.clipboard.writeText(text).then(function () {
             var original = btn.textContent;
             btn.textContent = "Copied";
             setTimeout(function () { btn.textContent = original; }, 1500);
           });
         });
+      });
+
+      // tabs
+      var tabs = document.querySelectorAll('[role="tab"]');
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          tabs.forEach(function (t) {
+            var on = t === tab;
+            t.setAttribute("aria-selected", on);
+            document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+          });
+        });
+      });
+
+      // command builder: only non-default values become flags
+      var base = "curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash";
+      var cmd = document.getElementById("install-cmd");
+      function val(id) { return document.getElementById(id); }
+      // shell-quote, but leave a leading ~/ outside the quotes so it still expands
+      function quote(v) {
+        if (/^~\//.test(v)) return "~/" + quote(v.slice(2));
+        return /^[\w.\/-]+$/.test(v) ? v : "'" + v.replace(/'/g, "'\\''") + "'";
       }
+      function build() {
+        var flags = [];
+        var dir = val("o-dir").value.trim(), fp = val("o-fport").value.trim(), bp = val("o-bport").value.trim();
+        if (val("o-yes").checked) flags.push("--yes");
+        if (dir && dir !== "eunomia") flags.push("--dir " + quote(dir));
+        if (fp && fp !== "3000") flags.push("--frontend-port " + quote(fp));
+        if (bp && bp !== "8001") flags.push("--backend-port " + quote(bp));
+        var agents = val("o-agents").value;
+        if (agents !== "all") flags.push("--agents " + agents);
+        cmd.textContent = flags.length ? base + " -s -- " + flags.join(" ") : base;
+      }
+      ["o-dir", "o-fport", "o-bport", "o-agents", "o-yes"].forEach(function (id) {
+        val(id).addEventListener("input", build);
+        val(id).addEventListener("change", build);
+      });
 
       var pill = document.getElementById("version-pill");
       if (pill) {

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eunomia docs</title>
+  <meta name="description" content="Eunomia documentation: quickstart, installation, AI agents and MCP, concepts, deployment.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%233fa873'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- The docs live in the Eunomia repo's docs/ folder (also served in-app and
+       over MCP); this page renders them straight from GitHub, so there's one copy. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --canvas: #0b0d0f; --surface: #16191d; --surface-raised: #20242a;
+      --ink: #f2f4f6; --ink-dim: #9aa3ad; --ink-faint: #7a8390;
+      --border: rgba(242, 244, 246, 0.08); --border-strong: rgba(242, 244, 246, 0.16);
+      --felt: #3fa873;
+      --font-sans: "Inter", system-ui, sans-serif; --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); font: 15px/1.65 var(--font-sans); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    .topbar { max-width: 1040px; margin: 0 auto; padding: 22px 20px; display: flex; justify-content: space-between; font-size: 13px; }
+    .topbar a { color: var(--ink-faint); text-decoration: none; }
+    .topbar a:hover { color: var(--ink); }
+    .layout { max-width: 1040px; margin: 0 auto; padding: 0 20px 80px; display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 28px; }
+    nav { position: sticky; top: 20px; align-self: start; display: flex; flex-direction: column; gap: 2px; }
+    nav .label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--felt); font-weight: 600; margin: 0 0 8px 12px; }
+    nav a { text-decoration: none; padding: 8px 12px; border-radius: 9px; font-size: 14px; color: var(--ink-dim); }
+    nav a[aria-current="page"] { background: var(--surface-raised); color: var(--ink); font-weight: 600; }
+    article { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 32px clamp(20px, 4vw, 40px); min-height: 60vh; }
+    article h1 { font-size: 30px; letter-spacing: -.02em; margin: 0 0 18px; }
+    article h2 { font-size: 19px; margin: 32px 0 10px; }
+    article h3 { font-size: 16px; margin: 24px 0 8px; }
+    article p, article li { color: var(--ink-dim); }
+    article strong, article b { color: var(--ink); }
+    article a { color: var(--felt); text-underline-offset: 3px; }
+    article code { font: .88em var(--font-mono); background: var(--surface-raised); border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px; color: var(--ink); }
+    article pre { background: var(--surface-raised); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; overflow-x: auto; }
+    article pre code { background: none; border: 0; padding: 0; }
+    article table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; font-size: 13.5px; margin: 0 0 16px; }
+    article th, article td { border: 1px solid var(--border); padding: 7px 10px; text-align: left; vertical-align: top; }
+    article th { background: var(--surface-raised); color: var(--ink); }
+    article blockquote { border-left: 2px solid var(--border-strong); margin: 0 0 12px; padding-left: 14px; }
+    .muted { color: var(--ink-faint); }
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; flex-direction: row; flex-wrap: wrap; }
+      nav .label { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="./">← Eunomia</a>
+    <a href="https://github.com/Qyrhal/Eunomia/tree/main/docs" target="_blank" rel="noopener">Edit on GitHub ↗</a>
+  </div>
+  <div class="layout">
+    <nav aria-label="Docs">
+      <span class="label">Docs</span>
+      <a href="?d=quickstart" data-doc="quickstart">Quickstart</a>
+      <a href="?d=installation" data-doc="installation">Installation</a>
+      <a href="?d=agents" data-doc="agents">AI agents &amp; MCP</a>
+      <a href="?d=concepts" data-doc="concepts">Concepts</a>
+      <a href="?d=deployment" data-doc="deployment">Deployment</a>
+    </nav>
+    <article id="doc"><p class="muted">Loading…</p></article>
+  </div>
+  <script>
+    (function () {
+      var RAW = "https://raw.githubusercontent.com/Qyrhal/Eunomia/main/docs/";
+      var known = ["quickstart", "installation", "agents", "concepts", "deployment"];
+      var slug = new URLSearchParams(location.search).get("d");
+      if (known.indexOf(slug) < 0) slug = "quickstart";
+      document.querySelectorAll("nav a").forEach(function (a) {
+        if (a.getAttribute("data-doc") === slug) a.setAttribute("aria-current", "page");
+      });
+      var el = document.getElementById("doc");
+      fetch(RAW + slug + ".md")
+        .then(function (r) { return r.ok ? r.text() : Promise.reject(r.status); })
+        .then(function (md) {
+          el.innerHTML = DOMPurify.sanitize(marked.parse(md));
+          // sibling-doc links stay on this page; anything else relative goes to the repo
+          el.querySelectorAll("a[href]").forEach(function (a) {
+            var href = a.getAttribute("href");
+            var m = href.match(/^([\w-]+)\.md(#.*)?$/);
+            if (m) a.setAttribute("href", "?d=" + m[1] + (m[2] || ""));
+            else if (!/^(https?:|#|mailto:)/.test(href)) a.setAttribute("href", "https://github.com/Qyrhal/Eunomia/blob/main/docs/" + href);
+          });
+          var h1 = el.querySelector("h1");
+          if (h1) document.title = h1.textContent + " · Eunomia docs";
+        })
+        .catch(function () {
+          el.innerHTML = '<p class="muted">Couldn’t load this doc from GitHub. Read it at <a href="https://github.com/Qyrhal/Eunomia/tree/main/docs">github.com/Qyrhal/Eunomia/docs</a>.</p>';
+        });
+    })();
+  </script>
+</body>
+</html>
