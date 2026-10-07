@@ -380,7 +380,9 @@ fi
 step 3 "Installing"
 # ---------------------------------------------------------------------------
 if [ -d "$INSTALL_DIR/.git" ]; then
-  spinner "Updating existing checkout" bash -c "git -C '$INSTALL_DIR' fetch --depth 1 origin '$REF' && git -C '$INSTALL_DIR' checkout '$REF'"
+  # A tag fetched by name lands only in FETCH_HEAD, so ask for the tag ref itself
+  # (falling back to a branch); then check out what was fetched.
+  spinner "Updating existing checkout" bash -c "cd '$INSTALL_DIR' && { git fetch --depth 1 --force origin 'refs/tags/$REF:refs/tags/$REF' 2>/dev/null || git fetch --depth 1 origin '$REF'; } && git checkout --quiet '$REF' 2>/dev/null || git checkout --quiet FETCH_HEAD"
 else
   spinner "Cloning Eunomia (${REF})" bash -c "git clone --depth 1 --branch '$REF' '$REPO_URL' '$INSTALL_DIR' 2>/dev/null || git clone '$REPO_URL' '$INSTALL_DIR'; git -C '$INSTALL_DIR' checkout '$REF' 2>/dev/null || true"
 fi
