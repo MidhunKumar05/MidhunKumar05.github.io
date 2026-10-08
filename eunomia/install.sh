@@ -17,6 +17,9 @@
 #   --ref <ref>               git ref: a tag, branch, or "latest" (default: latest release)
 #   --backend-port <port>     host port for the backend (default: 8001)
 #   --frontend-port <port>    host port for the frontend (default: 3000)
+#   --domain <name>           serve over HTTPS at this domain with a free Let's Encrypt
+#                             certificate (needs DNS pointing here and ports 80/443 open)
+#   --acme-email <email>      email for Let's Encrypt (required with --domain)
 #   --openai-base-url <url>   OpenAI-compatible endpoint (default: https://api.openai.com/v1)
 #   --api-key <key>           API key for that endpoint. Optional: your AI agent can be the
 #                             model; a key just saves its tokens (embeddings + answer synthesis)
@@ -31,7 +34,7 @@
 
 set -euo pipefail
 
-INSTALLER_VERSION="1.6.0"
+INSTALLER_VERSION="1.7.0"
 
 # Never hang on a credential prompt -- fail fast instead.
 export GIT_TERMINAL_PROMPT=0
@@ -51,6 +54,8 @@ PASSWORD="${EUNOMIA_PASSWORD:-}"
 AGENTS="auto"
 AGENT_NAME="${EUNOMIA_AGENT:-}"
 INSTALL_DEPS=1
+DOMAIN=""
+ACME_EMAIL=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -60,6 +65,8 @@ while [ $# -gt 0 ]; do
     --openai-base-url) OPENAI_BASE_URL="$2"; shift 2 ;;
     --backend-port) BACKEND_PORT="$2"; shift 2 ;;
     --frontend-port) FRONTEND_PORT="$2"; shift 2 ;;
+    --domain) DOMAIN="$2"; shift 2 ;;
+    --acme-email) ACME_EMAIL="$2"; shift 2 ;;
     --email) EMAIL="$2"; shift 2 ;;
     --password) PASSWORD="$2"; shift 2 ;;
     --agents) AGENTS="$2"; shift 2 ;;
@@ -169,6 +176,25 @@ yes_no() {
   read -r __ans <&3 || __ans=""
   case "${__ans:-$__d}" in [Yy]*) return 0 ;; *) return 1 ;; esac
 }
+
+# --domain/--acme-email end up in .env and a Caddyfile, so only plain DNS
+# names and addresses get through (same rules as the updater and backend):
+# labels of letters/digits/hyphens ending in an alphabetic TLD -- no IPs.
+valid_domain() {
+  local label='[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?'
+  [ "${#1}" -le 253 ] && [[ "$1" =~ ^($label\.)+[A-Za-z]{2,63}$ ]]
+}
+valid_email() {
+  [ "${#1}" -le 254 ] && [[ "$1" =~ ^[A-Za-z0-9._%+-]{1,64}@(.+)$ ]] && valid_domain "${BASH_REMATCH[1]}"
+}
+check_https_args() {
+  [ -n "$DOMAIN" ] || return 0
+  DOMAIN="$(printf '%s' "$DOMAIN" | tr '[:upper:]' '[:lower:]')"
+  valid_domain "$DOMAIN" || fail "--domain: '$DOMAIN' isn't a domain name like eunomia.example.com (no http://, port or IP)"
+  [ -n "$ACME_EMAIL" ] || fail "--domain needs --acme-email <email> (Let's Encrypt's contact for certificate notices)"
+  valid_email "$ACME_EMAIL" || fail "--acme-email: '$ACME_EMAIL' isn't a valid email address"
+}
+check_https_args
 
 # ---------------------------------------------------------------------------
 banner() {
@@ -354,12 +380,23 @@ if [ "$AGENTS" != "none" ]; then
 fi
 EMAIL="${EMAIL:-${GIT_EMAIL:-me@eunomia.local}}"
 
+if [ "$INTERACTIVE" -eq 1 ] && [ -z "$DOMAIN" ]; then
+  echo
+  if yes_no "Serve over HTTPS with a free Let's Encrypt certificate?" N \
+    "Needs a domain pointing at this machine and ports 80/443 open. You can also turn it on later in Settings → HTTPS."; then
+    ask DOMAIN "Domain?" "eunomia.example.com" "The name your DNS points at this machine, without http://."
+    ask ACME_EMAIL "Email for Let's Encrypt?" "$EMAIL" "Only used for certificate expiry notices."
+    check_https_args
+  fi
+fi
+
 if [ "$INTERACTIVE" -eq 1 ]; then
   echo
   printf "  %sReady to install%s\n" "$BOLD" "$RESET"
   printf "    folder         %s\n" "$INSTALL_DIR"
   printf "    release        %s\n" "$REF"
   printf "    web app / API  :%s / :%s\n" "$FRONTEND_PORT" "$BACKEND_PORT"
+  printf "    HTTPS          %s\n" "$([ -n "$DOMAIN" ] && echo "https://$DOMAIN (Let's Encrypt, $ACME_EMAIL)" || echo "off — turn on later in Settings → HTTPS")"
   printf "    model          %s (%s)\n" "$OPENAI_BASE_URL" "$([ -n "$OPENAI_KEY" ] && echo "key set" || echo "no key — agents are the model")"
   printf "    updates        one-click, from Settings → Updates\n"
   printf "    AI agents      %s\n" "$([ "$AGENTS" = "none" ] && echo "not connected" || echo "connect ($AGENTS) as $EMAIL")"
@@ -373,6 +410,13 @@ port_in_use() { (exec 4<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null; }
 if [ ! -d "$INSTALL_DIR/.git" ]; then
   for p in "$FRONTEND_PORT" "$BACKEND_PORT"; do
     port_in_use "$p" && fail "port $p is already in use — stop whatever is on it, or pick another with --frontend-port/--backend-port"
+  done
+fi
+# HTTPS needs 80 (Let's Encrypt's check) and 443 -- unless this install's own
+# caddy already holds them.
+if [ -n "$DOMAIN" ] && ! grep -qx 'COMPOSE_PROFILES=https' "$INSTALL_DIR/.env" 2>/dev/null; then
+  for p in 80 443; do
+    port_in_use "$p" && fail "port $p is already in use — HTTPS needs ports 80 and 443 free (stop the web server on it, or install without --domain)"
   done
 fi
 
@@ -403,6 +447,17 @@ if [ ! -f .env ]; then
   ok "generated .env with fresh secrets"
 else
   ok "existing .env found — secrets left untouched"
+  # Eunomia v1.3+ refuses to start without an ENCRYPTION_KEY of 16+ characters
+  # (older versions silently used a known fallback). Give older installs one.
+  key="$(sed -n 's/^ENCRYPTION_KEY=//p' .env | tail -1)"
+  if [ "${#key}" -lt 16 ]; then
+    if grep -q '^ENCRYPTION_KEY=' .env; then
+      sed -i.bak "s#^ENCRYPTION_KEY=.*#ENCRYPTION_KEY=$(openssl rand -base64 32)#" .env && rm -f .env.bak
+    else
+      echo "ENCRYPTION_KEY=$(openssl rand -base64 32)" >> .env
+    fi
+    warn "no encryption key was set — generated one. Re-enter saved connector credentials and API keys in the app."
+  fi
   FRONTEND_PORT="$(sed -n 's/^FRONTEND_PORT=//p' .env | tail -1)"; FRONTEND_PORT="${FRONTEND_PORT:-3000}"
   BACKEND_PORT="$(sed -n 's/^BACKEND_PORT=//p' .env | tail -1)"; BACKEND_PORT="${BACKEND_PORT:-8001}"
 fi
@@ -418,6 +473,23 @@ else
   echo "EUNOMIA_IMAGE_TAG=${IMAGE_TAG}" >> .env
 fi
 
+# HTTPS: the `caddy` service (compose profile "https") gets the certificate.
+# Values were validated by check_https_args, so they're safe in sed.
+if [ -n "$DOMAIN" ]; then
+  if grep -q '^  caddy:' docker-compose.yml 2>/dev/null; then
+    for kv in "EUNOMIA_DOMAIN=$DOMAIN" "EUNOMIA_ACME_EMAIL=$ACME_EMAIL" "COMPOSE_PROFILES=https"; do
+      if grep -q "^${kv%%=*}=" .env; then sed -i.bak "s#^${kv%%=*}=.*#${kv}#" .env && rm -f .env.bak
+      else echo "$kv" >> .env; fi
+    done
+    ok "HTTPS on for ${DOMAIN}"
+  else
+    warn "${REF} predates built-in HTTPS — installing without it (re-run with a newer release)"
+    DOMAIN=""
+  fi
+elif grep -qx 'COMPOSE_PROFILES=https' .env; then
+  DOMAIN="$(sed -n 's/^EUNOMIA_DOMAIN=//p' .env | tail -1)" # re-run of an HTTPS install: keep it
+fi
+
 # Created here so Docker doesn't create it root-owned for the bind mount,
 # which the host-side updater then couldn't write to.
 mkdir -p update-status
@@ -425,6 +497,22 @@ mkdir -p update-status
 spinner "Pulling prebuilt images" docker compose pull
 spinner "Starting the stack" docker compose up -d
 spinner "Waiting for Eunomia to come up" bash -c "for i in \$(seq 1 90); do curl -sf -o /dev/null http://localhost:${BACKEND_PORT}/healthz && curl -sf -o /dev/null http://localhost:${FRONTEND_PORT}/login && exit 0; sleep 1; done; exit 1"
+
+# Not fatal: DNS or a firewall may just not be ready yet, and Caddy keeps
+# retrying the certificate on its own.
+HTTPS_OK=0
+if [ -n "$DOMAIN" ]; then
+  info "waiting for https://${DOMAIN} (Let's Encrypt usually takes under a minute)"
+  for _ in $(seq 1 45); do
+    curl -sf -o /dev/null --max-time 5 "https://${DOMAIN}/login" && { HTTPS_OK=1; break; }
+    sleep 2
+  done
+  if [ "$HTTPS_OK" -eq 1 ]; then ok "https://${DOMAIN} is up with a Let's Encrypt certificate"
+  else
+    warn "https://${DOMAIN} isn't answering yet. Check that ${DOMAIN}'s DNS points at this machine and ports 80/443"
+    warn "are reachable from the internet; Caddy keeps retrying. Status: Settings → HTTPS, logs: docker compose logs caddy"
+  fi
+fi
 
 # ---------------------------------------------------------------------------
 step 4 "Connecting"
@@ -442,6 +530,10 @@ else
 fi
 
 # AI agents: account + one API token per agent + MCP entry in each agent's config.
+# Agents use the HTTPS address once it answers (it works from anywhere);
+# until then, the local API port.
+AGENT_URL="http://localhost:${BACKEND_PORT}"
+[ "$HTTPS_OK" -eq 0 ] || AGENT_URL="https://${DOMAIN}"
 CREDS_FILE=".eunomia-credentials"
 GENERATED_PASSWORD=0
 CONNECTED=0
@@ -460,7 +552,7 @@ connect_agents() {
     PASSWORD="$(openssl rand -hex 12)"; GENERATED_PASSWORD=1
   fi
   local rc=0
-  EUNOMIA_PASSWORD="$PASSWORD" bash "$script" --url "http://localhost:${BACKEND_PORT}" --email "$EMAIL" \
+  EUNOMIA_PASSWORD="$PASSWORD" bash "$script" --url "$AGENT_URL" --email "$EMAIL" \
     --agents "$AGENTS" ${AGENT_NAME:+--agent "$AGENT_NAME"} || rc=$?
   [ -z "$tmp" ] || rm -f "$tmp"
   if [ "$rc" -eq 0 ] && [ "$GENERATED_PASSWORD" -eq 1 ]; then
@@ -481,9 +573,10 @@ fi
 # ---------------------------------------------------------------------------
 echo
 printf "  %s%sEunomia is up.%s\n\n" "$GREEN" "$BOLD" "$RESET"
+[ -z "$DOMAIN" ] || printf "  Open it          %shttps://%s%s%s\n" "$CYAN" "$DOMAIN" "$RESET" "$([ "$HTTPS_OK" -eq 1 ] || echo " (once the certificate is issued)")"
 printf "  Open it          %shttp://localhost:%s%s\n" "$CYAN" "$FRONTEND_PORT" "$RESET"
 [ -z "$LAN_IP" ] || printf "  Other devices    %shttp://%s:%s%s\n" "$CYAN" "$LAN_IP" "$FRONTEND_PORT" "$RESET"
-printf "  MCP server       %shttp://localhost:%s/mcp%s\n" "$CYAN" "$BACKEND_PORT" "$RESET"
+printf "  MCP server       %s%s/mcp%s\n" "$CYAN" "$AGENT_URL" "$RESET"
 if [ "$CONNECTED" -eq 1 ]; then
   printf "  Sign in with     %s" "$EMAIL"
   if [ "$GENERATED_PASSWORD" -eq 1 ]; then printf "  /  %s  %s(saved in %s/%s)%s" "$PASSWORD" "$GREY" "$INSTALL_PATH" "$CREDS_FILE" "$RESET"

@@ -368,7 +368,7 @@ Then reload your MCP servers, call the eunomia `docs` tool to learn the tools, a
       <h2>What the installer does</h2>
       <ol class="steps">
         <li><b>Checks your machine</b> and installs anything missing: git, Docker (Colima on macOS, so no GUI), and jq. It starts Docker if it isn't running.</li>
-        <li><b>Asks a few questions</b>: folder, ports, an optional model endpoint (base URL first, then key), updates, and your account. Then it shows a summary before changing anything.</li>
+        <li><b>Asks a few questions</b>: folder, ports, an optional model endpoint (base URL first, then key), updates, your account, and optionally HTTPS at your own domain with a free Let's Encrypt certificate (<code>--domain</code>, <code>--acme-email</code>; or later in Settings → HTTPS). Then it shows a summary before changing anything.</li>
         <li><b>Installs</b>: clones the latest release, generates secrets into <code>.env</code>, and starts SurrealDB, the API and the web app.</li>
         <li><b>Connects</b>: turns on one-click updates (Settings → Updates) and adds Eunomia's MCP server to Claude Code, Codex, Hermes, Gemini CLI, Cursor, Windsurf, OpenCode, VS Code and Claude Desktop, each with its own token. It also installs the memory skill, and for Claude Code adds automatic recall on every prompt.</li>
       </ol>
@@ -381,8 +381,8 @@ Then reload your MCP servers, call the eunomia `docs` tool to learn the tools, a
         <a class="doc-card" href="docs.html?d=quickstart"><strong>Quickstart</strong><span>Install, sign in, and connect an agent in five minutes.</span></a>
         <a class="doc-card" href="docs.html?d=installation"><strong>Installation</strong><span>Every flag, manual install, and installing as an agent.</span></a>
         <a class="doc-card" href="docs.html?d=agents"><strong>AI agents &amp; MCP</strong><span>Connecting agents, every tool, and running with no key.</span></a>
-        <a class="doc-card" href="docs.html?d=concepts"><strong>Concepts</strong><span>Vaults, memories, recall, merging, the 3D graph and the vector cloud.</span></a>
-        <a class="doc-card" href="docs.html?d=deployment"><strong>Deployment</strong><span>TLS, production settings, updates and backups.</span></a>
+        <a class="doc-card" href="docs.html?d=concepts"><strong>Concepts</strong><span>Vaults, memories, recall, merging, the graph and the 3D vector cloud.</span></a>
+        <a class="doc-card" href="docs.html?d=deployment"><strong>Deployment</strong><span>HTTPS (Let's Encrypt), production settings, updates and backups.</span></a>
       </div>
     </section>
 
