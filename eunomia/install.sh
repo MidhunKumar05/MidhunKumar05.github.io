@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Eunomia installer — clones the latest release, generates secrets, starts the
-# stack with Docker Compose (SurrealDB + Rust backend + Next.js frontend),
-# with one-click updates built in, and connects your AI agents over MCP.
+# stack with Docker Compose (SurrealDB + Rust backend + Next.js frontend, plus
+# nightly encrypted backups on releases that have them), with one-click updates
+# built in, and connects your AI agents over MCP. Works for 1.x and 2.x releases;
+# re-running it over a 1.x install moves its data to SurrealDB 3 when the new
+# release needs that (the old data volume is kept).
 #
 # Usage:
 #   curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash
@@ -34,7 +37,7 @@
 
 set -euo pipefail
 
-INSTALLER_VERSION="1.7.0"
+INSTALLER_VERSION="1.8.0"
 
 # Never hang on a credential prompt -- fail fast instead.
 export GIT_TERMINAL_PROMPT=0
@@ -176,6 +179,15 @@ yes_no() {
   read -r __ans <&3 || __ans=""
   case "${__ans:-$__d}" in [Yy]*) return 0 ;; *) return 1 ;; esac
 }
+
+# set_env KEY VALUE: replace or append KEY=VALUE in ./.env (values contain no '#').
+set_env() {
+  if grep -q "^$1=" .env; then sed -i.bak "s#^$1=.*#$1=$2#" .env && rm -f .env.bak
+  else echo "$1=$2" >> .env; fi
+}
+# has_setting NAME: the checked-out release's compose file uses it (2.x settings
+# are only written for releases that read them).
+has_setting() { grep -q "$1" docker-compose.yml 2>/dev/null; }
 
 # --domain/--acme-email end up in .env and a Caddyfile, so only plain DNS
 # names and addresses get through (same rules as the updater and backend):
@@ -423,7 +435,10 @@ fi
 # ---------------------------------------------------------------------------
 step 3 "Installing"
 # ---------------------------------------------------------------------------
+PREV_REF=""; PREV_TAG="latest"
 if [ -d "$INSTALL_DIR/.git" ]; then
+  PREV_REF="$(git -C "$INSTALL_DIR" rev-parse HEAD 2>/dev/null || true)"
+  PREV_TAG="$(sed -n 's/^EUNOMIA_IMAGE_TAG=//p' "$INSTALL_DIR/.env" 2>/dev/null | tail -1)"; PREV_TAG="${PREV_TAG:-latest}"
   # A tag fetched by name lands only in FETCH_HEAD, so ask for the tag ref itself
   # (falling back to a branch); then check out what was fetched.
   spinner "Updating existing checkout" bash -c "cd '$INSTALL_DIR' && { git fetch --depth 1 --force origin 'refs/tags/$REF:refs/tags/$REF' 2>/dev/null || git fetch --depth 1 origin '$REF'; } && git checkout --quiet '$REF' 2>/dev/null || git checkout --quiet FETCH_HEAD"
@@ -451,13 +466,16 @@ else
   # (older versions silently used a known fallback). Give older installs one.
   key="$(sed -n 's/^ENCRYPTION_KEY=//p' .env | tail -1)"
   if [ "${#key}" -lt 16 ]; then
-    if grep -q '^ENCRYPTION_KEY=' .env; then
-      sed -i.bak "s#^ENCRYPTION_KEY=.*#ENCRYPTION_KEY=$(openssl rand -base64 32)#" .env && rm -f .env.bak
+    set_env ENCRYPTION_KEY "$(openssl rand -base64 32)"
+    if [ -z "$key" ] && has_setting ENCRYPTION_KEY_LEGACY_EMPTY; then
+      # 2.x still reads values saved under the old empty key, and re-encrypts them as they're saved again
+      set_env ENCRYPTION_KEY_LEGACY_EMPTY 1
+      warn "no encryption key was set — generated one (values saved without one stay readable)"
     else
-      echo "ENCRYPTION_KEY=$(openssl rand -base64 32)" >> .env
+      warn "no encryption key was set — generated one. Re-enter saved connector credentials and API keys in the app."
     fi
-    warn "no encryption key was set — generated one. Re-enter saved connector credentials and API keys in the app."
   fi
+  grep -q '^JWT_SECRET=.' .env || set_env JWT_SECRET "$(openssl rand -base64 32)"
   FRONTEND_PORT="$(sed -n 's/^FRONTEND_PORT=//p' .env | tail -1)"; FRONTEND_PORT="${FRONTEND_PORT:-3000}"
   BACKEND_PORT="$(sed -n 's/^BACKEND_PORT=//p' .env | tail -1)"; BACKEND_PORT="${BACKEND_PORT:-8001}"
 fi
@@ -467,10 +485,16 @@ fi
 # get images of that name -- branches use "latest".
 IMAGE_TAG="latest"
 case "$REF" in v[0-9]*) IMAGE_TAG="$REF" ;; esac
-if grep -q '^EUNOMIA_IMAGE_TAG=' .env; then
-  sed -i.bak "s#^EUNOMIA_IMAGE_TAG=.*#EUNOMIA_IMAGE_TAG=${IMAGE_TAG}#" .env && rm -f .env.bak
-else
-  echo "EUNOMIA_IMAGE_TAG=${IMAGE_TAG}" >> .env
+set_env EUNOMIA_IMAGE_TAG "$IMAGE_TAG"
+
+# Nightly encrypted backups (releases with a `backup` service): the key lives in
+# .env, apart from the backups. A backup service that already made its own key
+# (in its volume) keeps it, so older backups stay readable with the same key.
+if grep -q '^  backup:' docker-compose.yml 2>/dev/null && ! grep -q '^BACKUP_ENCRYPTION_KEY=.' .env; then
+  bkey="$(docker compose exec -T backup cat /backups/.backup-key 2>/dev/null | tr -d '\n' || true)"
+  [[ "$bkey" =~ ^[A-Za-z0-9+/=]{16,}$ ]] || bkey="$(openssl rand -base64 32)"
+  set_env BACKUP_ENCRYPTION_KEY "$bkey"
+  ok "backup encryption key in .env (keep a copy off this machine: without it backups can't be read)"
 fi
 
 # HTTPS: the `caddy` service (compose profile "https") gets the certificate.
@@ -478,8 +502,7 @@ fi
 if [ -n "$DOMAIN" ]; then
   if grep -q '^  caddy:' docker-compose.yml 2>/dev/null; then
     for kv in "EUNOMIA_DOMAIN=$DOMAIN" "EUNOMIA_ACME_EMAIL=$ACME_EMAIL" "COMPOSE_PROFILES=https"; do
-      if grep -q "^${kv%%=*}=" .env; then sed -i.bak "s#^${kv%%=*}=.*#${kv}#" .env && rm -f .env.bak
-      else echo "$kv" >> .env; fi
+      set_env "${kv%%=*}" "${kv#*=}"
     done
     ok "HTTPS on for ${DOMAIN}"
   else
@@ -489,14 +512,45 @@ if [ -n "$DOMAIN" ]; then
 elif grep -qx 'COMPOSE_PROFILES=https' .env; then
   DOMAIN="$(sed -n 's/^EUNOMIA_DOMAIN=//p' .env | tail -1)" # re-run of an HTTPS install: keep it
 fi
+# 2.x: OAuth discovery advertises PUBLIC_URL, so it must be the address agents use.
+# With HTTPS, Caddy proxies to the frontend, which then believes its X-Forwarded-*
+# headers; that's only safe when nothing else can reach the frontend, so it stops
+# listening on the network. A PUBLIC_URL set on an existing install is left alone.
+if [ -n "$DOMAIN" ] && has_setting FRONTEND_TRUST_FORWARDED; then
+  set_env FRONTEND_TRUST_FORWARDED 1
+  set_env FRONTEND_BIND 127.0.0.1
+  set_env PUBLIC_URL "https://$DOMAIN"
+elif has_setting PUBLIC_URL && { [ -z "$PREV_REF" ] || ! grep -q '^PUBLIC_URL=' .env; }; then
+  set_env PUBLIC_URL "http://localhost:${BACKEND_PORT}"
+fi
 
 # Created here so Docker doesn't create it root-owned for the bind mount,
 # which the host-side updater then couldn't write to.
 mkdir -p update-status
 
+# Re-run over an install whose data is still SurrealDB 2.x, with a release that
+# pins 3.x: 3.x can't open 2.x data, so copy it across first (the same step
+# "Update now" runs). The script verifies record counts, keeps the old volume,
+# and on any failure puts the old database back; then this checkout goes back
+# too. It does nothing on a fresh install or one already on 3.x.
+if [ -n "$PREV_REF" ] && [ -f scripts/upgrade-surreal-v3.sh ] \
+  && docker compose config --images 2>/dev/null | grep -q '^surrealdb/surrealdb:v\{0,1\}3\.'; then
+  info "moving your data to SurrealDB 3 if it needs it (the app is offline meanwhile; large installs take a while)"
+  if ! bash scripts/upgrade-surreal-v3.sh >> update-status/upgrade.log 2>&1; then
+    git checkout --quiet "$PREV_REF" 2>/dev/null
+    set_env EUNOMIA_IMAGE_TAG "$PREV_TAG"
+    tail -5 update-status/upgrade.log >&2
+    fail "the SurrealDB 3 upgrade failed and was rolled back: your install is unchanged (log: ${INSTALL_DIR}/update-status/upgrade.log)"
+  fi
+  ok "database ready for ${REF} (log: ${INSTALL_DIR}/update-status/upgrade.log)"
+fi
+
 spinner "Pulling prebuilt images" docker compose pull
 spinner "Starting the stack" docker compose up -d
-spinner "Waiting for Eunomia to come up" bash -c "for i in \$(seq 1 90); do curl -sf -o /dev/null http://localhost:${BACKEND_PORT}/healthz && curl -sf -o /dev/null http://localhost:${FRONTEND_PORT}/login && exit 0; sleep 1; done; exit 1"
+# 2.x: /readyz also checks the database and its migrations (/healthz only the process)
+HEALTH_PATH=/healthz
+! has_setting /readyz || HEALTH_PATH=/readyz
+spinner "Waiting for Eunomia to come up" bash -c "for i in \$(seq 1 90); do curl -sf -o /dev/null http://localhost:${BACKEND_PORT}${HEALTH_PATH} && curl -sf -o /dev/null http://localhost:${FRONTEND_PORT}/login && exit 0; sleep 1; done; exit 1"
 
 # Not fatal: DNS or a firewall may just not be ready yet, and Caddy keeps
 # retrying the certificate on its own.
@@ -575,7 +629,7 @@ echo
 printf "  %s%sEunomia is up.%s\n\n" "$GREEN" "$BOLD" "$RESET"
 [ -z "$DOMAIN" ] || printf "  Open it          %shttps://%s%s%s\n" "$CYAN" "$DOMAIN" "$RESET" "$([ "$HTTPS_OK" -eq 1 ] || echo " (once the certificate is issued)")"
 printf "  Open it          %shttp://localhost:%s%s\n" "$CYAN" "$FRONTEND_PORT" "$RESET"
-[ -z "$LAN_IP" ] || printf "  Other devices    %shttp://%s:%s%s\n" "$CYAN" "$LAN_IP" "$FRONTEND_PORT" "$RESET"
+[ -z "$LAN_IP" ] || grep -qx 'FRONTEND_BIND=127.0.0.1' .env || printf "  Other devices    %shttp://%s:%s%s\n" "$CYAN" "$LAN_IP" "$FRONTEND_PORT" "$RESET"
 printf "  MCP server       %s%s/mcp%s\n" "$CYAN" "$AGENT_URL" "$RESET"
 if [ "$CONNECTED" -eq 1 ]; then
   printf "  Sign in with     %s" "$EMAIL"
@@ -583,11 +637,14 @@ if [ "$CONNECTED" -eq 1 ]; then
   elif [ -f "$CREDS_FILE" ]; then printf "  %s(password in %s/%s)%s" "$GREY" "$INSTALL_PATH" "$CREDS_FILE" "$RESET"; fi
   echo
 else
-  printf "  First visit      create your account at the web app\n"
+  printf "  First visit      create your account at the web app%s\n" "$(has_setting EUNOMIA_ADMIN_EMAILS && echo " (the first account is the admin)")"
 fi
 echo
 if [ "$CONNECTED" -eq 1 ]; then
   info "restart your AI agent(s) to load Eunomia's tools (Claude Code: exit, then claude --continue)"
+fi
+if [ -n "$DOMAIN" ] && has_setting 'SIGNUP=' && ! grep -q '^SIGNUP=' .env; then
+  info "anyone who can reach https://${DOMAIN} can sign up: once your team has, set SIGNUP=invite (or closed) in .env and run docker compose up -d"
 fi
 if [ -z "$OPENAI_KEY" ]; then
   info "no model key set: your agents do the thinking. To save their tokens, add one in Settings → OpenAI"
