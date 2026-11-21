@@ -107,40 +107,40 @@
 </head>
 <body>
 <main>
-  <div class="eyebrow">k3s · raspberry pi</div>
+  <div class="eyebrow">k3s · raspberry pi · google sso</div>
   <h1>Homelab</h1>
   <p class="lede">Self-hosted apps on the Pi, deployed by ArgoCD from <a href="https://github.com/Qyrhal/homelab" style="color:var(--ink-dim)">Qyrhal/homelab</a>.</p>
 
   <div class="grid">
-    <a class="app" href="http://192.168.8.198:30080">
+    <a class="app" href="https://oxynote.midhun.qzz.io">
       <div class="icon" style="background:#6f9bc9">O</div>
       <div class="name">Oxynote <span>→</span></div>
       <p class="desc">Engineering wiki with live metrics and logs on the page.</p>
-      <div class="addr">:30080</div>
+      <div class="addr">oxynote.midhun.qzz.io</div>
     </a>
-    <a class="app" href="http://192.168.8.198:30212">
+    <a class="app" href="https://cloud.midhun.qzz.io">
       <div class="icon" style="background:#5aa6c9">C</div>
       <div class="name">Cloudreve <span>→</span></div>
       <p class="desc">File storage and sharing.</p>
-      <div class="addr">:30212</div>
+      <div class="addr">cloud.midhun.qzz.io</div>
     </a>
-    <a class="app" href="http://192.168.8.198:30585">
+    <a class="app" href="https://tirreno.midhun.qzz.io">
       <div class="icon" style="background:#c98a5a">T</div>
       <div class="name">tirreno <span>→</span></div>
       <p class="desc">Security analytics and fraud detection.</p>
-      <div class="addr">:30585</div>
+      <div class="addr">tirreno.midhun.qzz.io</div>
     </a>
-    <a class="app" href="https://192.168.8.198:30443">
+    <a class="app" href="https://argocd.midhun.qzz.io">
       <div class="icon" style="background:#3fa873">A</div>
       <div class="name">ArgoCD <span>→</span></div>
       <p class="desc">GitOps dashboard: sync status for every app.</p>
-      <div class="addr">:30443</div>
+      <div class="addr">argocd.midhun.qzz.io</div>
     </a>
   </div>
 
   <footer>
-    These links only work on the home network (<code>192.168.8.198</code>).
-    ArgoCD uses a self-signed certificate, so the browser will warn the first time.
+    Every app signs in through <a href="https://auth.midhun.qzz.io">auth.midhun.qzz.io</a> with Google.
+    Access is limited to the owner's account.
   </footer>
 </main>
 </body>

@@ -4,6 +4,6 @@ GitHub Pages site hosting [Eunomia](https://github.com/Qyrhal/Eunomia): the land
 
 Install: `curl -fsSL https://midhunkumar05.github.io/eunomia/install.sh | bash`
 
-`homelab/` is a launcher page for the self-hosted apps on the home k3s cluster (LAN-only links), served at https://midhunkumar05.github.io/homelab/.
+`homelab/` is a launcher page for the self-hosted apps on the home k3s cluster (links to https://*.midhun.qzz.io, all behind Google SSO), served at https://midhunkumar05.github.io/homelab/.
 
 `index.yaml` and `charts/` are a Helm chart repository (discordbot) served from the site root.
